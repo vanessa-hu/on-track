@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log {{ habitName }}
+{% endblock %}
+
+{% block main %}
+    <h2>Log Your Habit for {{ dateString }}!</h2><br>
+    <p>Did you complete this activity today?</p>
+
+    <form action="/enter_data_1" method="post">
+
+        <select name="tracker">
+
+                    <option>Yes! :)</option>
+                    <option>No :(</option>
+
+            </select>
+        <button class="btn btn-primary" type="submit">Track!</button>
+
+    </form>
+{% endblock %}
