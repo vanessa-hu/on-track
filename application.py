@@ -8,6 +8,7 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 from helpers import apology, login_required, lookup, usd, pass_strong
+from datetime import datetime
 
 # Configure application
 app = Flask(__name__)
@@ -173,9 +174,23 @@ def register():
     # log the user in
     rows = db.execute("SELECT * FROM users WHERE username = :username", username=request.form.get("username"))
     session["user_id"] = rows[0]["username"]
+    return redirect("/set_goals")
+
+@app.route("/set_goals", methods=["GET", "POST"])
+@login_required
+def set_goals():
+    if request.method == "GET":
+        return render_template("set_goals.html")
+    goal_1_name = request.form.get("goal_1_name")
+    goal_2_name = request.form.get("goal_2_name")
+    goal_3_name = request.form.get("goal_3_name")
+    goal_1_type = request.form.get("goal_1_type")
+    goal_2_type = request.form.get("goal_2_type")
+    goal_3_type = request.form.get("goal_3_type")
+    year = datetime.now().year
+    month = datetime.now().month
+    day = datetime.now().day
     return redirect("/")
-
-
 @app.route("/enter", methods=["GET", "POST"])
 @login_required
 def enter():
