@@ -175,10 +175,14 @@ def register():
         return apology("Password must contain at least one upper case letter, one lower case letter, and one number. Password must also be at least 8 characters long.")
     pass_hash = generate_password_hash(password)
     # hash the password and add the account into the user database
-    db.execute("INSERT INTO users (username, hash) VALUES (:username, :pass_hash)", username=name, pass_hash=pass_hash)
+    command = "INSERT INTO users (username, password) VALUES (\'"+name + "\', \'" + pass_hash+"\');"
+    print(command)
+    db.execute(command)
     # log the user in
-    rows = db.execute("SELECT * FROM users WHERE username = :username", username=request.form.get("username"))
-    session["user_id"] = rows[0]["username"]
+    command="SELECT * FROM users WHERE username = \'" + request.form.get("username")+"\';"
+    rows = db.execute(command)
+    print(rows.fetchone())
+    session["user_id"] = rows.fetchone()[1]
     return redirect("/set_goals")
 
 @app.route("/set_goals", methods=["GET", "POST"])
