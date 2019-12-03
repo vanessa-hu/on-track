@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
-from helpers import apology, login_required, lookup, usd, pass_strong
+from helpers import apology, login_required, pass_strong
 from datetime import datetime
 
 # Configure application
@@ -24,18 +24,11 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-
-# Custom filter
-app.jinja_env.filters["usd"] = usd
-
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
-
-
-
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
@@ -62,7 +55,7 @@ def enter_data_1():
         connection.close()
         return render_template("enter_data_1.html")
     else:
-        didIt = lookup(request.form.get("tracker"))
+        didIt = request.form.get("tracker")
 
         # if no answer
         if didIt == None:
@@ -120,14 +113,18 @@ def login():
 
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username",
-                          username=request.form.get("username"))
+                          {'username': request.form.get("username")}).fetchall()
 
         # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
+        pass_hash = str(rows[0]).split(",")[2]
+        print(pass_hash)
+        pass_hash = pass_hash[2:len(pass_hash) - 1]
+        print(pass_hash)
+        if len(rows) != 1 or not check_password_hash(pass_hash, request.form.get("password")):
             return apology("invalid username and/or password", 403)
 
         # Remember which user has logged in
-        session["user_id"] = rows[0]["username"]
+        session["user_id"] = request.form.get("username")
         connection.commit()
         connection.close()
         # Redirect user to home page
@@ -175,9 +172,8 @@ def register():
     # by default, it'll do the rest of the stuff if given a post request
     name = request.form.get('username')
     # check if username is taken
-    taken = db.execute("SELECT COUNT(username) FROM users WHERE username=:username", {"username": name})
-    print(taken.fetchall(), type(taken.fetchall()))
-    if taken[0]['COUNT(username)'] == 1:
+    taken = int(str(db.execute("SELECT COUNT(username) FROM users WHERE username=:username", {"username": name}).fetchone())[1])
+    if taken != 0:
         return apology("Username is already taken.")
     # check if username is blank
     if not name:
@@ -222,11 +218,15 @@ def set_goals():
     year = datetime.now().year
     month = datetime.now().month
     day = datetime.now().day
-    query = "UPDATE users (goal_1_name, goal_1_type, goal_1_year, goal_1_month, goal_1_day, goal_2_name, goal_2_type, goal_2_year, goal_2_month, goal_2_day, goal_3_name, goal_2_type, goal_3_year, goal_3_month, goal_3_day)"
-    db.execute(":query VALUES (:name1, :type1, :year1, :month1, :day1, :name2, :type2, :year2, :month2, :day2, :name3, :type3, :year3, :month3, :day3)",
-    query=query, name1=goal_1_name, type1=goal_1_type, year1=year, month1=month, day1=day,
-    name2=goal_2_name, type2=goal_2_type, year2=year, month2=month, day2=day,
-    name3=goal_3_name, type3=goal_3_type, year3=year, month3=month, day3=day)
+    query = "UPDATE users SET goal_1_name, goal_1_type, goal_1_year, goal_1_month, goal_1_day, goal_2_name, goal_2_type, goal_2_year, goal_2_month, goal_2_day, goal_3_name, goal_2_type, goal_3_year, goal_3_month, goal_3_day)"
+    db.execute('''UPDATE users SET goal_1_name=:name1, goal_1_type=:type1, goal_1_year=:year1, goal_1_month=:month1, goal_1_day=:day1,
+    goal_2_name=:name2, goal_2_type=:type2, goal_2_year=:year2, goal_2_month=:month2, goal_2_day=:day2,
+    goal_3_name=:name3, goal_3_type=:type3, goal_3_year=:year3, goal_3_month=:month3, goal_3_day=:day3
+    WHERE username=:username;
+    ''',
+    {'query': query, 'name1': goal_1_name, 'type1': goal_1_type, 'year1': year, 'month1': month, 'day1': day,
+    'name2': goal_2_name, 'type2': goal_2_type, 'year2': year, 'month2': month, 'day2': day,
+    'name3': goal_3_name, 'type3': goal_3_type, 'year3': year, 'month3': month, 'day3': day, 'username': session['user_id']})
     connection.commit()
     connection.close()
     return redirect("/")
