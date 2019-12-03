@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Set Goals
+{% endblock %}
+
+{% block main %}
+
+    <h2>Set Goals</h2><br>
+
+    <form action="/set_goals" method="post">
+
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="goal_1_name" placeholder="Goal 1 Name" type="text">
+            <select name="goal_1_type">
+                    <option value="binary">Binary</option>
+                    <option value="numeric">Numeric</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="goal_2_name" placeholder="Goal 2 Name" type="text">
+            <select name="goal_2_type">
+                    <option value="binary">Binary</option>
+                    <option value="numeric">Numeric</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="goal_3_name" placeholder="Goal 3 Name" type="text">
+            <select name="goal_3_type">
+                    <option value="binary">Binary</option>
+                    <option value="numeric">Numeric</option>
+            </select>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Set Goals</button>
+
+    </form><br>
+
+
+{% endblock %}
