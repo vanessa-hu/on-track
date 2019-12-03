@@ -34,9 +34,8 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# Configure CS50 Library to use SQLite database
-connection = sqlite3.connect("tracker.db")
-db = connection.cursor()
+
+
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
@@ -46,12 +45,21 @@ if not os.environ.get("API_KEY"):
 @app.route("/")
 @login_required
 def index():
+    connection = sqlite3.connect("tracker.db")
+    db = connection.cursor()
+    # insert code here
+    connection.commit()
+    connection.close()
     return apology("to do")
 
 @app.route("/enter_data_1", methods=["GET", "POST"])
 @login_required
 def enter_data_1():
+    connection = sqlite3.connect("tracker.db")
+    db = connection.cursor()
     if request.method == "GET":
+        connection.commit()
+        connection.close()
         return render_template("enter_data_1.html")
     else:
         didIt = lookup(request.form.get("tracker"))
@@ -73,20 +81,26 @@ def enter_data_1():
             # what should we display? just override prev entry or??? can only view calendar history if we log it or no?
             pass
 
-
+        connection.commit()
+        connection.close()
         return render_template("goal_1_month.html")
 
 
 @app.route("/goal2", methods=["GET", "POST"])
 @login_required
 def goal2():
+    connection = sqlite3.connect("tracker.db")
+    db = connection.cursor()
     if request.method == "GET":
+        connection.commit()
+        connection.close()
         return apology("to do")
     return apology("to do")
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+
     """Log user in"""
 
     # Forget any user_id
@@ -94,7 +108,8 @@ def login():
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-
+        connection = sqlite3.connect("tracker.db")
+        db = connection.cursor()
         # Ensure username was submitted
         if not request.form.get("username"):
             return apology("must provide username", 403)
@@ -113,7 +128,8 @@ def login():
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["username"]
-
+        connection.commit()
+        connection.close()
         # Redirect user to home page
         return redirect("/")
 
@@ -136,26 +152,33 @@ def logout():
 @app.route("/goal3", methods=["GET", "POST"])
 @login_required
 def goal3():
+    connection = sqlite3.connect("tracker.db")
+    db = connection.cursor()
     if request.method == "GET":
+        connection.commit()
+        connection.close()
         return apology("to do")
+    connection.commit()
+    connection.close()
     return apology("to do")
 
 
 @app.route("/register", methods=["GET", "POST"])
 # citation: https://docs.python.org/2.5/lib/sqlite3-Cursor-Objects.html
 def register():
+    connection = sqlite3.connect("tracker.db")
+    db = connection.cursor()
     if request.method == "GET":
+        connection.commit()
+        connection.close()
         return render_template('register.html')
     # by default, it'll do the rest of the stuff if given a post request
     name = request.form.get('username')
     # check if username is taken
-    """
-    command = "SELECT COUNT(username) FROM users WHERE username=\'"+name+"\';"
-    taken = db.execute(command)
-    print(taken.fetchone())
+    taken = db.execute("SELECT COUNT(username) FROM users WHERE username=:username", {"username": name})
+    print(taken.fetchall(), type(taken.fetchall()))
     if taken[0]['COUNT(username)'] == 1:
         return apology("Username is already taken.")
-    """
     # check if username is blank
     if not name:
         return apology("Username cannot be blank.")
@@ -170,25 +193,25 @@ def register():
     # check that passwords match
     if password != confirmation:
         return apology("Passwords do not match.")
-    # personal touch: check password strength
     if not pass_strong(password):
         return apology("Password must contain at least one upper case letter, one lower case letter, and one number. Password must also be at least 8 characters long.")
     pass_hash = generate_password_hash(password)
     # hash the password and add the account into the user database
-    command = "INSERT INTO users (username, password) VALUES (\'"+name + "\', \'" + pass_hash+"\');"
-    print(command)
-    db.execute(command)
+    db.execute("INSERT INTO users (username, password) VALUES (:username, :password);", {"username": name, "password": pass_hash})
     # log the user in
-    command="SELECT * FROM users WHERE username = \'" + request.form.get("username")+"\';"
-    rows = db.execute(command)
-    print(rows.fetchone())
-    session["user_id"] = rows.fetchone()[1]
+    session["user_id"] = name
+    connection.commit()
+    connection.close()
     return redirect("/set_goals")
 
 @app.route("/set_goals", methods=["GET", "POST"])
 @login_required
 def set_goals():
+    connection = sqlite3.connect("tracker.db")
+    db = connection.cursor()
     if request.method == "GET":
+        connection.commit()
+        connection.close()
         return render_template("set_goals.html")
     goal_1_name = request.form.get("goal_1_name")
     goal_2_name = request.form.get("goal_2_name")
@@ -204,10 +227,14 @@ def set_goals():
     query=query, name1=goal_1_name, type1=goal_1_type, year1=year, month1=month, day1=day,
     name2=goal_2_name, type2=goal_2_type, year2=year, month2=month, day2=day,
     name3=goal_3_name, type3=goal_3_type, year3=year, month3=month, day3=day)
+    connection.commit()
+    connection.close()
     return redirect("/")
 @app.route("/enter", methods=["GET", "POST"])
 @login_required
 def enter():
+    connection = sqlite3.connect("tracker.db")
+    db = connection.cursor()
     """Sell shares of stock"""
     # see what you can sell
     if request.method == "GET":
@@ -225,3 +252,4 @@ def errorhandler(e):
 # Listen for errors
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
+

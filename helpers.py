@@ -94,4 +94,3 @@ def pass_strong(password):
     if not contains_number:
         return False
     return True
-
