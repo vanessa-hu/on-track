@@ -142,13 +142,16 @@ def goal3():
 
 
 @app.route("/register", methods=["GET", "POST"])
+# citation: https://docs.python.org/2.5/lib/sqlite3-Cursor-Objects.html
 def register():
     if request.method == "GET":
         return render_template('register.html')
     # by default, it'll do the rest of the stuff if given a post request
     name = request.form.get('username')
     # check if username is taken
-    taken = db.execute("SELECT COUNT(username) FROM users WHERE username=:username", username=name)
+    command = "SELECT COUNT(username) FROM users WHERE username=\'"+name+"\';"
+    taken = db.execute(command)
+    print(taken.fetchone())
     if taken[0]['COUNT(username)'] == 1:
         return apology("Username is already taken.")
     # check if username is blank
@@ -190,6 +193,11 @@ def set_goals():
     year = datetime.now().year
     month = datetime.now().month
     day = datetime.now().day
+    query = "UPDATE users (goal_1_name, goal_1_type, goal_1_year, goal_1_month, goal_1_day, goal_2_name, goal_2_type, goal_2_year, goal_2_month, goal_2_day, goal_3_name, goal_2_type, goal_3_year, goal_3_month, goal_3_day)"
+    db.execute(":query VALUES (:name1, :type1, :year1, :month1, :day1, :name2, :type2, :year2, :month2, :day2, :name3, :type3, :year3, :month3, :day3)",
+    query=query, name1=goal_1_name, type1=goal_1_type, year1=year, month1=month, day1=day,
+    name2=goal_2_name, type2=goal_2_type, year2=year, month2=month, day2=day,
+    name3=goal_3_name, type3=goal_3_type, year3=year, month3=month, day3=day)
     return redirect("/")
 @app.route("/enter", methods=["GET", "POST"])
 @login_required
