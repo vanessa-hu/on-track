@@ -41,6 +41,26 @@ def index():
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
     # insert code here
+    # outline:
+        # display a paragraph basically describing what this page is and how to get back to the homepage in case the user needs help
+        # nav bar with names of three goals, all of them just have an href to goal_display
+        # execute a SQL query and get the goal names to display at the top
+        # make an index.html that extends layout.html
+    connection.commit()
+    connection.close()
+    return render_template("index.html")
+
+@app.route("/goal_display", methods=["GET", "POST"])
+@login_required
+def goal_display():
+    connection = sqlite3.connect("tracker.db")
+    db = connection.cursor()
+    # insert code here
+    # outline:
+        # execute a sql query to get goal name, goal type, and user data
+        # have a variable or variables for the month info
+        # render the calendar for the appropriate month, and render the data entry form for the appropriate type
+        # make a binary_display.html and a numeric_display.html, and pass in date info + user data as variables
     connection.commit()
     connection.close()
     return apology("to do")
