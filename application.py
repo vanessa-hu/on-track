@@ -180,7 +180,7 @@ def enter_numeric_data(number):
         # get date info
     exists = db.execute("SELECT user, year, month, day FROM numeric_goals WHERE user = :u AND year = :y AND month = :m AND day = :d", {'u': session['user_id'], 'y': year, 'm': month, 'd': day})
     if len(exists.fetchall()) == 0:
-        db.execute("INSERT INTO binary_goals (user, goal_name, year, month, day, value) VALUES (:u, :g, :y, :m, :d, :c)",
+        db.execute("INSERT INTO numeric_goals (user, goal_name, year, month, day, value) VALUES (:u, :g, :y, :m, :d, :c)",
               {'u': session['user_id'], 'g': get_goal_names()[number - 1], 'y': year, 'm': month, 'd': day, 'c': value})
     else:
         db.execute("UPDATE numeric_goals SET completed = :c WHERE username = :u AND goal_name = :g", {'c': value, 'u': session['user_id'], 'g': get_goal_names()[number - 1]})
