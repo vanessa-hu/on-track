@@ -8,7 +8,7 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 from helpers import apology, login_required, pass_strong
-from datetime import datetime
+
 
 # Configure application
 app = Flask(__name__)
@@ -65,7 +65,7 @@ def goal_display():
     connection.close()
     return apology("to do")
 
-@app.route("/enter_data_1", methods=["GET", "POST"])
+@app.route("/enter_binary_data", methods=["GET", "POST"])
 @login_required
 def enter_data_1():
     connection = sqlite3.connect("tracker.db")
@@ -136,11 +136,12 @@ def login():
                           {'username': request.form.get("username")}).fetchall()
 
         # Ensure username exists and password is correct
-        pass_hash = str(rows[0]).split(",")[2]
-        print(pass_hash)
+        if rows == []:
+            return apology("invalid username and/or password", 403)
+        split = str(rows[0]).split(",")
+        pass_hash = split[2]
         pass_hash = pass_hash[2:len(pass_hash) - 1]
-        print(pass_hash)
-        if len(rows) != 1 or not check_password_hash(pass_hash, request.form.get("password")):
+        if not check_password_hash(pass_hash, request.form.get("password")):
             return apology("invalid username and/or password", 403)
 
         # Remember which user has logged in
@@ -250,16 +251,32 @@ def set_goals():
     connection.commit()
     connection.close()
     return redirect("/")
-@app.route("/enter", methods=["GET", "POST"])
+
+@app.route("/enter_binary", methods=["POST"])
 @login_required
-def enter():
+def enter_binary():
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
-    """Sell shares of stock"""
-    # see what you can sell
-    if request.method == "GET":
-        return apology("to do")
-    return redirect("/")
+    completed = request.form.get("completed")
+    goal_name = request.form.get("goal_name")
+    year = request.form.get("year")
+    month = request.form.get("month")
+    day = request.form.get("day")
+    return render_template("goal_display_binary.html")
+
+@app.route("/enter_numeric", methods=["POST"])
+@login_required
+def enter_numeric():
+    connection = sqlite3.connect("tracker.db")
+    db = connection.cursor()
+    value = request.form.get("value")
+    goal_name = request.form.get("goal_name")
+    year = request.form.get("year")
+    month = request.form.get("month")
+    day = request.form.get("day")
+    # insert data into appropriate table
+    db.execute("INSERT INTO ")
+    return render_template("goal_display_numeric.html")
 
 
 def errorhandler(e):
