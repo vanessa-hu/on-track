@@ -24,7 +24,7 @@
 
     </head>
 
-    <body>
+    <body style="background-image: url('../static/mountain.jpg'); background-size: cover;">
 
         <nav class="navbar navbar-expand-md navbar-light bg-light border">
             <a class="navbar-brand" href="/"><span class="yellow">O</span><span class="green">n</span> <span class="red">Track</span></a>
@@ -34,9 +34,9 @@
             <div class="collapse navbar-collapse" id="navbar">
                 {% if session.user_id %}
                     <ul class="navbar-nav mr-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="/goal_display/1">{{ goal_names[0] }}</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/goal_display/2">{{ goal_names[1] }}</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/goal_display/3">{{ goal_names[2] }}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/goal_display/1">sleep</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/goal_display/2">Goal 2</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/goal_display/3">Goal 3</a></li>
                     </ul>
                     <ul class="navbar-nav ml-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>

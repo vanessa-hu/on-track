@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
-from helpers import apology, login_required, pass_strong
+from helpers import *
 import calendar_funcs
 import calendar
 
@@ -31,7 +31,7 @@ app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
-goal_names = ["", "", ""]
+
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
@@ -52,17 +52,21 @@ def index():
     goal_1 = "sleep"
     connection.commit()
     connection.close()
-    return render_template("index.html", goal_names = goal_names)
+    return render_template("index.html", goal_names = get_goal_names())
 
-@app.route("/goal_display", methods=["GET", "POST"])
+# citation: https://stackoverflow.com/questions/26954122/how-can-i-pass-arguments-into-redirecturl-for-of-flask
+@app.route("/goal_display/<number>", methods=["GET", "POST"])
 @login_required
 def goal_display(number):
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
     number = int(number)
-    goal_info = str(db.execute("SELECT * FROM users WHERE users = :u", {'u': session['id']}).fetchall()[0])
-    goal_name = goal_info.split(",")[number*5+3].strip().strip("'")
-    goal_type = goal_info.split(",")[number*5+4].strip().strip("'")
+    print(number)
+
+    goal_info = str(db.execute("SELECT * FROM users WHERE username = :u", {'u': session['user_id']}).fetchall()[0])
+    goal_name = goal_info.split(",")[number*5+3-5].strip().strip("'")
+    goal_type = goal_info.split(",")[number*5+4-5].strip().strip("'")
+    print(goal_type)
     now = datetime.now()
     year = now.year
     month = now.month
@@ -81,6 +85,13 @@ def goal_display(number):
         prev_month = month - 1
         prev_year = year
     prev_weekday_num, prev_num_days = calendar.monthrange(prev_year, prev_month) # zero is monday
+    if month == 12:
+        next_month = 12
+        prev_year = year - 1
+    else:
+        prev_month = month - 1
+        prev_year = year
+    prev_weekday_num, prev_num_days = calendar.monthrange(prev_year, prev_month) # zero is monday
     # db.execute("SELECT FROM us")
         # execute a sql query to get goal name, goal type, and user data - done
         # have a variable or variables for the month info-
@@ -88,8 +99,33 @@ def goal_display(number):
         # make a binary_display.html and a numeric_display.html, and pass in date info + user data as variables
     connection.commit()
     connection.close()
-    if goal_type == "binary":
-        render_template("binary_month.html", num_weeks = num_weeks, goal_names = goal_names)
+
+
+    first_day, num_days = calendar.monthrange(year, month)
+
+    dates = [' ' for i in range(num_weeks * 7)] //populates entire list with spaces
+
+    if first_day = 6: #if it's Sunday, start populating from Sunday
+        n=0
+    else:
+        n=first_day+1
+
+    for i in range(n, n+num_days):
+        myList[n]
+
+
+last_day= calendar.monthrange(year, month)
+for i in range(m+1, m+1):
+   self.myList.append(' ')
+if last_day = 6:
+m=6
+else:
+m= 5-last_day
+'''
+
+    if goal_type == "Binary":
+        return render_template("binary_month.html", num_weeks = num_weeks, goal_names = get_goal_names())
+    return apology("to do")
 
 @app.route("/enter_binary_data", methods=["GET", "POST"])
 @login_required
@@ -119,35 +155,18 @@ def enter_binary_data(number):
         # get date info
         if db.execute("SELECT username, year, month, day FROM binary_goals WHERE u = :u AND y = :y AND m = :m AND d = :d", {'u': session['user_id'], 'y': y, 'm': m, 'd': d}) == None:
             db.execute("INSERT INTO binary_goals (username, year, month, day) VALUES (:u, :y, :m, :d)",
-               {'u': session['user_id'], 'y': y, 'm': m, 'd': d})
+               {'u': session['user_id'], 'y': year, 'm': month, 'd': day})
         else:
             db.execute("UPDATE binary_goals SET completed = :c WHERE username = :u AND goal_name = :g", {'c': didIt, 'u': session['user_id']})
         # HOW TO FIGURE OUT WHICH HABIT IT IS???????????
         connection.commit()
         connection.close()
-
-       # dates[28, 29, 30]
-
-       # binary[]
         if int(number) == 1:
            return redirect("goal_display/1")
         if int(number) == 2:
            return redirect("goal_display/2")
         if int(number) == 3:
            return redirect("goal_display/3")
-
-
-
-@app.route("/goal2", methods=["GET", "POST"])
-@login_required
-def goal2():
-    connection = sqlite3.connect("tracker.db")
-    db = connection.cursor()
-    if request.method == "GET":
-        connection.commit()
-        connection.close()
-        return apology("to do")
-    return apology("to do")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -185,6 +204,11 @@ def login():
 
         # Remember which user has logged in
         session["user_id"] = request.form.get("username")
+        goal_info = str(db.execute("SELECT * FROM users WHERE username = :u", {'u': session['user_id']}).fetchall()[0])
+        goal_1_name = goal_info.split(",")[3].strip().strip("'")
+        goal_2_name = goal_info.split(",")[8].strip().strip("'")
+        goal_3_name = goal_info.split(",")[13].strip().strip("'")
+        set_goal_names(goal_1_name, goal_2_name, goal_3_name)
         connection.commit()
         connection.close()
         # Redirect user to home page
@@ -201,7 +225,7 @@ def logout():
 
     # Forget any user_id
     session.clear()
-    goal_names = ["", "", ""]
+    set_goal_names("", "", "")
     # Redirect user to login form
     return redirect("/")
 
@@ -262,6 +286,8 @@ def set_goals():
     goal_1_type = request.form.get("goal_1_type")
     goal_2_type = request.form.get("goal_2_type")
     goal_3_type = request.form.get("goal_3_type")
+    if not goal_1_name or not goal_2_name or not goal_3_name:
+        return apology("goal name cannot be blank")
     year = datetime.now().year
     month = datetime.now().month
     day = datetime.now().day
@@ -274,7 +300,7 @@ def set_goals():
     {'query': query, 'name1': goal_1_name, 'type1': goal_1_type, 'year1': year, 'month1': month, 'day1': day,
     'name2': goal_2_name, 'type2': goal_2_type, 'year2': year, 'month2': month, 'day2': day,
     'name3': goal_3_name, 'type3': goal_3_type, 'year3': year, 'month3': month, 'day3': day, 'username': session['user_id']})
-    goal_names = [goal_1_name, goal_2_name, goal_3_name]
+    set_goal_names(goal_1_name, goal_2_name, goal_3_name)
     connection.commit()
     connection.close()
     return redirect("/")

@@ -5,7 +5,7 @@ import urllib.parse
 from flask import redirect, render_template, request, session
 from functools import wraps
 
-
+goal_names = ["", "", ""]
 def apology(message, code=400):
     """Render message as an apology to user."""
     def escape(s):
@@ -62,3 +62,11 @@ def pass_strong(password):
     if not contains_number:
         return False
     return True
+
+def get_goal_names():
+    return goal_names
+
+def set_goal_names(item1, item2, item3):
+    goal_names[0] = item1
+    goal_names[1] = item2
+    goal_names[2] = item3

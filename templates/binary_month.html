@@ -81,16 +81,17 @@
     </form>
 <body>
 
-{% if {{ num_weeks }} == 4 %}
+{% if num_weeks == 4 %}
     <table style="width:100%">
   <tr>
+    <th>Sunday</th>
     <th>Monday</th>
     <th>Tuesday</th>
     <th>Wednesday</th>
     <th>Thursday</th>
     <th>Friday</th>
     <th>Saturday</th>
-    <th>Sunday</th>
+
   </tr>
   <tr>
     <td class="binary{{ data[0] }}">{{ dates[0] }}</td>
@@ -128,16 +129,17 @@
   </tr>
 </table>
 
-{% if {{ num_weeks }} ==5 %}
+{% elif num_weeks ==5 %}
 <table style="width:100%">
   <tr>
+    <th>Sunday</th>
     <th>Monday</th>
     <th>Tuesday</th>
     <th>Wednesday</th>
     <th>Thursday</th>
     <th>Friday</th>
     <th>Saturday</th>
-    <th>Sunday</th>
+
   </tr>
   <tr>
     <td class="binary{{ data[0] }}">{{ dates[0] }}</td>
@@ -187,13 +189,14 @@
 {% else %}
 <table style="width:100%">
   <tr>
+    <th>Sunday</th>
     <th>Monday</th>
     <th>Tuesday</th>
     <th>Wednesday</th>
     <th>Thursday</th>
     <th>Friday</th>
     <th>Saturday</th>
-    <th>Sunday</th>
+
   </tr>
     <tr>
     <td class="binary{{ data[0] }}">{{ dates[0] }}</td>

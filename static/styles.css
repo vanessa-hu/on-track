@@ -38,6 +38,7 @@ main
 
     /* center contents */
     text-align: center;
+    background-color:#F0F8FF;
 
 }
 
@@ -52,9 +53,11 @@ main img
     padding: 10px;
 }
 
-.body
+body
 {
-    background-image: url("/templates/mountain.jpg");
+    background-image: url('../static/mountain.jpg');
+    background-size: cover;
+    background-image: url('../static/mountain.jpg');
     background-size: cover;
 
 }
