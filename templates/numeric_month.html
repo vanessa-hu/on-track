@@ -20,13 +20,47 @@
 <!--https://medium.com/@nitinpatel_20236/challenge-of-building-a-calendar-with-pure-javascript-a86f1303267d-->
     <body>
 
-        <form action="/enter_numeric_data" method="post">
+        <<form action="/enter_numeric" method="post">
 
-        Number:<br>
-        <input type="text" name="Number"><br>
-        <button class="btn btn-primary" type="submit">Track!</button>
+        <div class="form-group">
+            <select name="goal_1_type">
+                    <option value="binary">Binary</option>
+                    <option value="numeric">Numeric</option>
+                    <! --<option value="gradient">Gradient</option>-->
+            </select>
+            <select name="goal_1_type">
+                    <option value="binary">Binary</option>
+                    <option value="numeric">Numeric</option>
+                    <! --<option value="gradient">Gradient</option>-->
+            </select>
+            <select name="goal_1_type">
+                    <option value="binary">Binary</option>
+                    <option value="numeric">Numeric</option>
+                    <! --<option value="gradient">Gradient</option>-->
+            </select>
+        </div>
 
-    </form>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="goal_2_name" placeholder="Goal 2 Name" type="text">
+            <select name="goal_2_type">
+                    <option value="binary">Binary</option>
+                    <option value="numeric">Numeric</option>
+                    <! --<option value="gradient">Gradient</option>-->
+            </select>
+        </div>
+
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="goal_3_name" placeholder="Goal 3 Name" type="text">
+            <select name="goal_3_type">
+                    <option value="binary">Binary</option>
+                    <option value="numeric">Numeric</option>
+                    <! --<option value="gradient">Gradient</option> -->
+            </select>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Set Goals</button>
+
+    </form><br>
 
 
 <div class="container col-sm-4 col-md-7 col-lg-4 mt-5">
