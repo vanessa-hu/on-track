@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block main %}
+    <div class="alert alert-info" role="alert">
+  Make sure you have already registered!
+</div>
     <form action="/login" method="post">
         <div class="form-group">
             <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">

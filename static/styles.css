@@ -2,6 +2,7 @@ nav .navbar-brand
 {
     /* size for brand */
     font-size: xx-large;
+    background-color:white;
 }
 
 /* colors for brand */
@@ -21,7 +22,10 @@ nav .navbar-brand .green
 {
     color: #00CED1;
 }
-
+nav
+{
+    background-color: black;
+}
 main .form-control
 {
     /* center form controls */
@@ -55,9 +59,7 @@ main img
 
 body
 {
-    background-image: url('../static/mountain.jpg');
-    background-size: cover;
-    background-image: url('../static/mountain.jpg');
+    background-image: url('/home/ubuntu/project/on-track/static/mountain.jpg');
     background-size: cover;
 
 }

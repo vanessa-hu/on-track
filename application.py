@@ -55,7 +55,7 @@ def index():
     return render_template("index.html", goal_names = get_goal_names())
 
 # citation: https://stackoverflow.com/questions/26954122/how-can-i-pass-arguments-into-redirecturl-for-of-flask
-@app.route("/goal_display/<number>", methods=["GET", "POST"])
+@app.route("/goal_display/<number>")
 @login_required
 def goal_display(number):
     connection = sqlite3.connect("tracker.db")
@@ -78,96 +78,103 @@ def goal_display(number):
         num_weeks = 6
     elif num_days == 30 and weekday_num == 5:        # first day is fri/sat, 31 day month
         num_weeks = 6
-    if month == 1:
-        prev_month = 12
-        prev_year = year - 1
+
+    if weekday_num == 6: #if it's Sunday, start populating from Sunday
+        n = 0
     else:
-        prev_month = month - 1
-        prev_year = year
-    prev_weekday_num, prev_num_days = calendar.monthrange(prev_year, prev_month) # zero is monday
-    if month == 12:
-        next_month = 12
-        prev_year = year - 1
-    else:
-        prev_month = month - 1
-        prev_year = year
-    prev_weekday_num, prev_num_days = calendar.monthrange(prev_year, prev_month) # zero is monday
-    # db.execute("SELECT FROM us")
-        # execute a sql query to get goal name, goal type, and user data - done
-        # have a variable or variables for the month info-
-        # render the calendar for the appropriate month, and render the data entry form for the appropriate type
-        # make a binary_display.html and a numeric_display.html, and pass in date info + user data as variables
+        n = weekday_num + 1
+    front_pad = [" " for i in range(n)]
+    back_pad = [" " for i in range(num_weeks*7 - len(front_pad) - num_days)]
+    dates = front_pad + [i for i in range(1, 1+num_days)] + back_pad
+    data = []
+    for i in range(len(dates)):
+        if dates[i] == " ":
+            data.append(2)
+        else:
+            # execute some shit
+            var = db.execute("SELECT * FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+            {'username': session['user_id'], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
+            if len(var) == 0:
+                data.append(2)
+            else:
+                comp = int(str(var[0]).split(",")[5].strip(" ").strip("'").strip(")"))
+                data.append(comp)
+
     connection.commit()
     connection.close()
-
-
-    first_day, num_days = calendar.monthrange(year, month)
-
-    dates = [' ' for i in range(num_weeks * 7)] //populates entire list with spaces
-
-    if first_day = 6: #if it's Sunday, start populating from Sunday
-        n=0
-    else:
-        n=first_day+1
-
-    for i in range(n, n+num_days):
-        myList[n]
-
-
-last_day= calendar.monthrange(year, month)
-for i in range(m+1, m+1):
-   self.myList.append(' ')
-if last_day = 6:
-m=6
-else:
-m= 5-last_day
-'''
-
-    if goal_type == "Binary":
-        return render_template("binary_month.html", num_weeks = num_weeks, goal_names = get_goal_names())
+     = db.execute("SELECT c FROM binary_data WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+        {'username': session['user_id'], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
+    if goal_type == "binary":
+        return render_template("binary_month.html", month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = get_goal_names(), number = number)
     return apology("to do")
 
-@app.route("/enter_binary_data", methods=["GET", "POST"])
+@app.route("/enter_binary_data/<number>", methods=["POST"])
 @login_required
 def enter_binary_data(number):
+    number = int(number)
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
-    if request.method == "GET":
-        connection.commit()
-        connection.close()
-        return render_template("binary_month.html")
-    else:
-        month = int(request.form.get("desired_month")) #gives int 1-12
-        day = int(request.form.get("desired_day")) #gives int 1-31
-        year = request.form.get("desired_year")
-        didIt = int(request.form.get("binary_tracker")) #will be Yes 1, or No 0
+    month = int(request.form.get("desired_month")) #gives int 1-12
+    day = int(request.form.get("desired_day")) #gives int 1-31
+    year = int(request.form.get("desired_year"))
+    didIt = int(request.form.get("binary_tracker")) #will be Yes 1, or No 0
 
         # if no answer
-        if didIt == None or month == None or year == None:
-            return apology("Must fill in all fields!")
+    if didIt == None or month == None or year == None:
+        return apology("Must fill in all fields!")
+    weekday_num, num_days = calendar.monthrange(year, month) #0-6 is Mon-Sun
 
-        weekday_num, num_days = calendar.monthrange(year, month) #0-6 is Mon-Sun
-
-        if day > num_days:
-            return apology("Invalid day for this month.")
-
-
+    if day > num_days:
+        return apology("Invalid day for this month.")
         # get date info
-        if db.execute("SELECT username, year, month, day FROM binary_goals WHERE u = :u AND y = :y AND m = :m AND d = :d", {'u': session['user_id'], 'y': y, 'm': m, 'd': d}) == None:
-            db.execute("INSERT INTO binary_goals (username, year, month, day) VALUES (:u, :y, :m, :d)",
-               {'u': session['user_id'], 'y': year, 'm': month, 'd': day})
-        else:
-            db.execute("UPDATE binary_goals SET completed = :c WHERE username = :u AND goal_name = :g", {'c': didIt, 'u': session['user_id']})
-        # HOW TO FIGURE OUT WHICH HABIT IT IS???????????
-        connection.commit()
-        connection.close()
-        if int(number) == 1:
-           return redirect("goal_display/1")
-        if int(number) == 2:
-           return redirect("goal_display/2")
-        if int(number) == 3:
-           return redirect("goal_display/3")
+    exists = db.execute("SELECT user, year, month, day FROM binary_goals WHERE user = :u AND year = :y AND month = :m AND day = :d", {'u': session['user_id'], 'y': year, 'm': month, 'd': day})
+    if len(exists.fetchall()) == 0:
+        db.execute("INSERT INTO binary_goals (user, goal_name, year, month, day, completed) VALUES (:u, :g, :y, :m, :d, :c)",
+              {'u': session['user_id'], 'g': get_goal_names()[number - 1], 'y': year, 'm': month, 'd': day, 'c': didIt})
+    else:
+        db.execute("UPDATE binary_goals SET completed = :c WHERE username = :u AND goal_name = :g", {'c': didIt, 'u': session['user_id'], 'g': get_goal_names()[number - 1]})
+    connection.commit()
+    connection.close()
+    if int(number) == 1:
+          return redirect("/goal_display/1")
+    if int(number) == 2:
+          return redirect("/goal_display/2")
+    else:
+          return redirect("/goal_display/3")
 
+@app.route("/enter_numeric_data/<number>", methods=["POST"])
+@login_required
+def enter_numeric_data(number):
+    number = int(number)
+    connection = sqlite3.connect("tracker.db")
+    db = connection.cursor()
+    month = int(request.form.get("desired_month")) #gives int 1-12
+    day = int(request.form.get("desired_day")) #gives int 1-31
+    year = int(request.form.get("desired_year"))
+    didIt = int(request.form.get("numeric_tracker")) # will be a number
+
+        # if no answer
+    if didIt == None or month == None or year == None:
+        return apology("Must fill in all fields!")
+    weekday_num, num_days = calendar.monthrange(year, month) #0-6 is Mon-Sun
+
+    if day > num_days:
+        return apology("Invalid day for this month.")
+        # get date info
+    exists = db.execute("SELECT user, year, month, day FROM binary_goals WHERE user = :u AND year = :y AND month = :m AND day = :d", {'u': session['user_id'], 'y': year, 'm': month, 'd': day})
+    if len(exists.fetchall()) == 0:
+        db.execute("INSERT INTO binary_goals (user, goal_name, year, month, day, completed) VALUES (:u, :g, :y, :m, :d, :c)",
+              {'u': session['user_id'], 'g': get_goal_names()[number - 1], 'y': year, 'm': month, 'd': day, 'c': didIt})
+    else:
+        db.execute("UPDATE binary_goals SET completed = :c WHERE username = :u AND goal_name = :g", {'c': didIt, 'u': session['user_id'], 'g': get_goal_names()[number - 1]})
+    connection.commit()
+    connection.close()
+    if int(number) == 1:
+          return redirect("/goal_display/1")
+    if int(number) == 2:
+          return redirect("/goal_display/2")
+    else:
+          return redirect("/goal_display/3")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -228,8 +235,6 @@ def logout():
     set_goal_names("", "", "")
     # Redirect user to login form
     return redirect("/")
-
-
 
 @app.route("/register", methods=["GET", "POST"])
 # citation: https://docs.python.org/2.5/lib/sqlite3-Cursor-Objects.html

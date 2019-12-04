@@ -1,12 +1,13 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Log {{ habitName }}
+    Log {{ name }}
 {% endblock %}
 
 {% block main %}
-    <h2>Goal 1{{ name }}!</h2><br>
+    <h2>Track {{ name }}!</h2><br>
     <p>How on top of your goal have you been?</p>
+
 
     <form action="/enter_binary_data/{{ number }}" method="post">
         <p></p>
@@ -77,10 +78,22 @@
                     <option value = "0">No</option>
 
             </select>
-            <button class="btn btn-primary" type="submit">Track!</button>
-    </form>
-<body>
 
+
+		<div class="row">
+			  <button class="btn btn-primary" type="submit">Track!</button>
+
+		</div>
+	</div>
+
+    </form>
+    <script>
+
+
+</script>
+
+<body>
+<h3>{{ month }}{{ year }}</h3>
 {% if num_weeks == 4 %}
     <table style="width:100%">
   <tr>
@@ -129,7 +142,7 @@
   </tr>
 </table>
 
-{% elif num_weeks ==5 %}
+{% elif num_weeks == 5 %}
 <table style="width:100%">
   <tr>
     <th>Sunday</th>
@@ -347,7 +360,7 @@
         crossorigin="anonymous"></script>
 
 -->
-
+<p>You have fulfilled your goal {{ day }} days this month</p>
 </body>
 </html>
 {% endblock %}
