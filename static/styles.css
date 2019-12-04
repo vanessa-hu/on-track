@@ -68,3 +68,17 @@ td
     font-weight: bold;
 }
 
+.binary0
+{
+    background-color: red;
+}
+
+.binary1
+{
+    background-color: green;
+}
+
+.binary2
+{
+    background-color: white;
+}

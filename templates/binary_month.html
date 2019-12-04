@@ -8,11 +8,12 @@
     <h2>Goal 1{{ name }}!</h2><br>
     <p>How on top of your goal have you been?</p>
 
-    <form action="/enter_binary_data" method="post">
+    <form action="/enter_binary_data/{{ number }}" method="post">
+        <p></p>
         <select name="desired_month">
 
                     <option value= "1">January</option>
-                    <option value= "2">Feburary</option>
+                    <option value= "2">February</option>
                     <option value= "3">March</option>
                     <option value= "4">April</option>
                     <option value= "5">May</option>
@@ -66,21 +67,188 @@
             </select>
             <select name="desired_year">
 
-                    <option value= "1">2018</option>
+                    <option>2018</option>
                     <option>2019</option>
 
             </select>
 
              <select name = "binary_tracker">
-                    <option>Yes</option>
-                    <option>No</option>
+                    <option value = "1">Yes</option>
+                    <option value = "0">No</option>
 
             </select>
             <button class="btn btn-primary" type="submit">Track!</button>
     </form>
 <body>
 
+{% if {{ num_weeks }} == 4 %}
+    <table style="width:100%">
+  <tr>
+    <th>Monday</th>
+    <th>Tuesday</th>
+    <th>Wednesday</th>
+    <th>Thursday</th>
+    <th>Friday</th>
+    <th>Saturday</th>
+    <th>Sunday</th>
+  </tr>
+  <tr>
+    <td class="binary{{ data[0] }}">{{ dates[0] }}</td>
+    <td class="binary{{ data[1] }}">{{ dates[1] }}</td>
+    <td class="binary{{ data[2] }}">{{ dates[2] }}</td>
+    <td class="binary{{ data[3] }}">{{ dates[3] }}</td>
+    <td class="binary{{ data[4] }}">{{ dates[4] }}</td>
+    <td class="binary{{ data[5] }}">{{ dates[5] }}</td>
+    <td class="binary{{ data[6] }}">{{ dates[6] }}</td>
+  </tr>
+  <tr>
+    <td class="binary{{ data[7] }}">{{ dates[7] }}</td>
+    <td class="binary{{ data[8] }}">{{ dates[8] }}</td>
+    <td class="binary{{ data[9] }}">{{ dates[9] }}</td>
+    <td class="binary{{ data[10] }}">{{ dates[10] }}</td>
+    <td class="binary{{ data[11] }}">{{ dates[11] }}</td>
+    <td class="binary{{ data[12] }}">{{ dates[12] }}</td>
+    <td class="binary{{ data[13] }}">{{ dates[13] }}</td>
+  </tr>
+    <td class="binary{{ data[14] }}">{{ dates[14] }}</td>
+    <td class="binary{{ data[15] }}">{{ dates[15] }}</td>
+    <td class="binary{{ data[16] }}">{{ dates[16] }}</td>
+    <td class="binary{{ data[17] }}">{{ dates[17] }}</td>
+    <td class="binary{{ data[18] }}">{{ dates[18] }}</td>
+    <td class="binary{{ data[19] }}">{{ dates[19] }}</td>
+    <td class="binary{{ data[20] }}">{{ dates[20] }}</td>
+  <tr>
+    <td class="binary{{ data[21] }}">{{ dates[21] }}</td>
+    <td class="binary{{ data[22] }}">{{ dates[22] }}</td>
+    <td class="binary{{ data[23] }}">{{ dates[23] }}</td>
+    <td class="binary{{ data[24] }}">{{ dates[24] }}</td>
+    <td class="binary{{ data[25] }}">{{ dates[25] }}</td>
+    <td class="binary{{ data[26] }}">{{ dates[26] }}</td>
+    <td class="binary{{ data[27] }}">{{ dates[27] }}</td>
+  </tr>
+</table>
 
+{% if {{ num_weeks }} ==5 %}
+<table style="width:100%">
+  <tr>
+    <th>Monday</th>
+    <th>Tuesday</th>
+    <th>Wednesday</th>
+    <th>Thursday</th>
+    <th>Friday</th>
+    <th>Saturday</th>
+    <th>Sunday</th>
+  </tr>
+  <tr>
+    <td class="binary{{ data[0] }}">{{ dates[0] }}</td>
+    <td class="binary{{ data[1] }}">{{ dates[1] }}</td>
+    <td class="binary{{ data[2] }}">{{ dates[2] }}</td>
+    <td class="binary{{ data[3] }}">{{ dates[3] }}</td>
+    <td class="binary{{ data[4] }}">{{ dates[4] }}</td>
+    <td class="binary{{ data[5] }}">{{ dates[5] }}</td>
+    <td class="binary{{ data[6] }}">{{ dates[6] }}</td>
+  </tr>
+  <tr>
+    <td class="binary{{ data[7] }}">{{ dates[7] }}</td>
+    <td class="binary{{ data[8] }}">{{ dates[8] }}</td>
+    <td class="binary{{ data[9] }}">{{ dates[9] }}</td>
+    <td class="binary{{ data[10] }}">{{ dates[10] }}</td>
+    <td class="binary{{ data[11] }}">{{ dates[11] }}</td>
+    <td class="binary{{ data[12] }}">{{ dates[12] }}</td>
+    <td class="binary{{ data[13] }}">{{ dates[13] }}</td>
+  </tr>
+    <td class="binary{{ data[14] }}">{{ dates[14] }}</td>
+    <td class="binary{{ data[15] }}">{{ dates[15] }}</td>
+    <td class="binary{{ data[16] }}">{{ dates[16] }}</td>
+    <td class="binary{{ data[17] }}">{{ dates[17] }}</td>
+    <td class="binary{{ data[18] }}">{{ dates[18] }}</td>
+    <td class="binary{{ data[19] }}">{{ dates[19] }}</td>
+    <td class="binary{{ data[20] }}">{{ dates[20] }}</td>
+  <tr>
+    <td class="binary{{ data[21] }}">{{ dates[21] }}</td>
+    <td class="binary{{ data[22] }}">{{ dates[22] }}</td>
+    <td class="binary{{ data[23] }}">{{ dates[23] }}</td>
+    <td class="binary{{ data[24] }}">{{ dates[24] }}</td>
+    <td class="binary{{ data[25] }}">{{ dates[25] }}</td>
+    <td class="binary{{ data[26] }}">{{ dates[26] }}</td>
+    <td class="binary{{ data[27] }}">{{ dates[27] }}</td>
+  </tr>
+  <tr>
+    <td class="binary{{ data[28] }}">{{ dates[28] }}</td>
+    <td class="binary{{ data[29] }}">{{ dates[29] }}</td>
+    <td class="binary{{ data[30] }}">{{ dates[30] }}</td>
+    <td class="binary{{ data[31] }}">{{ dates[31] }}</td>
+    <td class="binary{{ data[31] }}">{{ dates[32] }}</td>
+    <td class="binary{{ data[33] }}">{{ dates[33] }}</td>
+    <td class="binary{{ data[34] }}">{{ dates[34] }}</td>
+  </tr>
+</table>
+
+{% else %}
+<table style="width:100%">
+  <tr>
+    <th>Monday</th>
+    <th>Tuesday</th>
+    <th>Wednesday</th>
+    <th>Thursday</th>
+    <th>Friday</th>
+    <th>Saturday</th>
+    <th>Sunday</th>
+  </tr>
+    <tr>
+    <td class="binary{{ data[0] }}">{{ dates[0] }}</td>
+    <td class="binary{{ data[1] }}">{{ dates[1] }}</td>
+    <td class="binary{{ data[2] }}">{{ dates[2] }}</td>
+    <td class="binary{{ data[3] }}">{{ dates[3] }}</td>
+    <td class="binary{{ data[4] }}">{{ dates[4] }}</td>
+    <td class="binary{{ data[5] }}">{{ dates[5] }}</td>
+    <td class="binary{{ data[6] }}">{{ dates[6] }}</td>
+  </tr>
+  <tr>
+    <td class="binary{{ data[7] }}">{{ dates[7] }}</td>
+    <td class="binary{{ data[8] }}">{{ dates[8] }}</td>
+    <td class="binary{{ data[9] }}">{{ dates[9] }}</td>
+    <td class="binary{{ data[10] }}">{{ dates[10] }}</td>
+    <td class="binary{{ data[11] }}">{{ dates[11] }}</td>
+    <td class="binary{{ data[12] }}">{{ dates[12] }}</td>
+    <td class="binary{{ data[13] }}">{{ dates[13] }}</td>
+  </tr>
+    <td class="binary{{ data[14] }}">{{ dates[14] }}</td>
+    <td class="binary{{ data[15] }}">{{ dates[15] }}</td>
+    <td class="binary{{ data[16] }}">{{ dates[16] }}</td>
+    <td class="binary{{ data[17] }}">{{ dates[17] }}</td>
+    <td class="binary{{ data[18] }}">{{ dates[18] }}</td>
+    <td class="binary{{ data[19] }}">{{ dates[19] }}</td>
+    <td class="binary{{ data[20] }}">{{ dates[20] }}</td>
+  <tr>
+    <td class="binary{{ data[21] }}">{{ dates[21] }}</td>
+    <td class="binary{{ data[22] }}">{{ dates[22] }}</td>
+    <td class="binary{{ data[23] }}">{{ dates[23] }}</td>
+    <td class="binary{{ data[24] }}">{{ dates[24] }}</td>
+    <td class="binary{{ data[25] }}">{{ dates[25] }}</td>
+    <td class="binary{{ data[26] }}">{{ dates[26] }}</td>
+    <td class="binary{{ data[27] }}">{{ dates[27] }}</td>
+  </tr>
+  <tr>
+    <td class="binary{{ data[28] }}">{{ dates[28] }}</td>
+    <td class="binary{{ data[29] }}">{{ dates[29] }}</td>
+    <td class="binary{{ data[30] }}">{{ dates[30] }}</td>
+    <td class="binary{{ data[31] }}">{{ dates[31] }}</td>
+    <td class="binary{{ data[31] }}">{{ dates[32] }}</td>
+    <td class="binary{{ data[33] }}">{{ dates[33] }}</td>
+    <td class="binary{{ data[34] }}">{{ dates[34] }}</td>
+  </tr>
+  <tr>
+    <td class="binary{{ data[35] }}">{{ dates[35] }}</td>
+    <td class="binary{{ data[36] }}">{{ dates[36] }}</td>
+    <td class="binary{{ data[37] }}">{{ dates[37] }}</td>
+    <td class="binary{{ data[38] }}">{{ dates[38] }}</td>
+    <td class="binary{{ data[39] }}">{{ dates[39] }}</td>
+    <td class="binary{{ data[40] }}">{{ dates[40] }}</td>
+    <td class="binary{{ data[41] }}">{{ dates[41] }}</td>
+  </tr>
+</table>
+{% endif %}
 <!--    <div class="month">
   <ul>
     <li class="prev">&#10094;</li>
@@ -91,7 +259,7 @@
 
 
 
-<!--https://medium.com/@nitinpatel_20236/challenge-of-building-a-calendar-with-pure-javascript-a86f1303267d-->
+<!--https://medium.com/@nitinpatel_20236/challenge-of-building-a-calendar-witd-pure-javascript-a86f1303267d-->
 
 
 <!--        <form action="/enter_binary" method="post">
@@ -108,19 +276,19 @@
 
 <div class="container col-sm-4 col-md-7 col-lg-4 mt-5">
     <div class="card">
-        <h3 class="card-header" id="monthAndYear"></h3>
+        <h3 class="card-header" id="montdAndYear"></h3>
         <table class="table table-bordered table-responsive-sm" id="calendar">
-            <thead>
+            <tdead>
             <tr>
-                <th>Sun</th>
-                <th>Mon</th>
-                <th>Tue</th>
-                <th>Wed</th>
-                <th>Thu</th>
-                <th>Fri</th>
-                <th>Sat</th>
+                <td>Sun</td>
+                <td>Mon</td>
+                <td>Tue</td>
+                <td>Wed</td>
+                <td>tdu</td>
+                <td>Fri</td>
+                <td>Sat</td>
             </tr>
-            </thead>
+            </tdead>
 
             <tbody id="calendar-body">
 
@@ -135,8 +303,8 @@
         </div>
         <br/>
         <form class="form-inline">
-            <label class="lead mr-2 ml-2" for="month">Jump To: </label>
-            <select class="form-control col-sm-4" name="month" id="month" onchange="jump()">
+            <label class="lead mr-2 ml-2" for="montd">Jump To: </label>
+            <select class="form-control col-sm-4" name="montd" id="montd" onchange="jump()">
                 <option value=0>Jan</option>
                 <option value=1>Feb</option>
                 <option value=2>Mar</option>
@@ -164,14 +332,14 @@
 <script src="script.js"></script>
 
 <!-- Optional JavaScript for bootstrap --
-<!-- jQuery first, then Popper.js, then Bootstrap JS --
+<!-- jQuery first, tden Popper.js, tden Bootstrap JS --
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
         integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
         crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+<script src="https://stackpatd.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
         integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
         crossorigin="anonymous"></script>
 

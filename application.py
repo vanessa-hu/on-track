@@ -8,6 +8,8 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 from helpers import apology, login_required, pass_strong
+import calendar
+from calendar import *
 
 
 # Configure application
@@ -29,6 +31,9 @@ app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+goal_1 = ""
+goal_2 = ""
+goal_3 = ""
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
@@ -56,6 +61,12 @@ def index():
 def goal_display(number):
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
+    if number == 1:
+        goal_info = db.execute("SELECT goal_1_name, goal_1_type FROM users WHERE users = :u", {'u': session['id']})
+    elif number == 2:
+        goal_info = db.execute("SELECT goal_2_name, goal_2_type FROM users WHERE users = :u", {'u': session['id']})
+    else:
+        goal_info = db.execute("SELECT goal_3_name, goal_3_type FROM users WHERE users = :u", {'u': session['id']})
     # insert code here
     # outline:
     # db.execute("SELECT FROM us")
@@ -69,7 +80,7 @@ def goal_display(number):
 
 @app.route("/enter_binary_data", methods=["GET", "POST"])
 @login_required
-def enter_data_1():
+def enter_binary_data(number):
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
     if request.method == "GET":
@@ -80,27 +91,31 @@ def enter_data_1():
         month = int(request.form.get("desired_month")) #gives int 1-12
         day = int(request.form.get("desired_day")) #gives int 1-31
         year = request.form.get("desired_year")
-        didIt = request.form.get("binary_tracker") #will be Yes or No
+        didIt = int(request.form.get("binary_tracker")) #will be Yes 1, or No 0
 
         # if no answer
         if didIt == None or month == None or year == None:
             return apology("Must fill in all fields!")
 
+        if day > monthrange(year, month)[1]:
+            apology("Invalid day for this month.")
+
 
         # get date info
-        y = now.year
-        m = now.month
-        d = now.day
-        if db.execute("SELECT username, year, month, day FROM binary_goals WHERE u = :u AND y = :y AND m = :m AND d = :d", u = session['user_id'], y = y, m = m, d = d) == None:
+        if db.execute("SELECT username, year, month, day FROM binary_goals WHERE u = :u AND y = :y AND m = :m AND d = :d", {'u': session['user_id'], 'y': y, 'm': m, 'd': d}) == None:
             db.execute("INSERT INTO binary_goals (username, year, month, day) VALUES (:u, :y, :m, :d)",
-                u = session['user_id'], y = y, m = m, d = d)
+               {'u': session['user_id'], 'y': y, 'm': m, 'd': d})
         else:
-            # what should we display? just override prev entry or??? can only view calendar history if we log it or no?
-            pass
-
+            db.execute("UPDATE binary_goals SET completed = :c WHERE username = :u AND goal_name = :g", {'c': didIt, 'u': session['user_id']})
+        # HOW TO FIGURE OUT WHICH HABIT IT IS???????????
         connection.commit()
         connection.close()
-        return render_template("goal_1_month.html")
+
+       # dates[28, 29, 30]
+       # first day is fri/sat, 31 day month
+       # first day is sat, 30 day month
+       # binary[]
+        return render_template("binary_month.html")
 
 
 @app.route("/goal2", methods=["GET", "POST"])
