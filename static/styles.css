@@ -7,19 +7,19 @@ nav .navbar-brand
 /* colors for brand */
 nav .navbar-brand .blue
 {
-    color: #537fbe;
+    color: #6495ED;
 }
 nav .navbar-brand .red
 {
-    color: #ea433b;
+    color: #FF7F50;
 }
 nav .navbar-brand .yellow
 {
-    color: #f5b82e;
+    color: #ADD8E6;
 }
 nav .navbar-brand .green
 {
-    color: #2e944b;
+    color: #00CED1;
 }
 
 main .form-control
@@ -38,9 +38,7 @@ main
 
     /* center contents */
     text-align: center;
-    background-image: url("mountain.jpg");
-    background-repeat:no-repeat;
-    background-size:cover;
+
 }
 
 main img
@@ -54,6 +52,12 @@ main img
     padding: 10px;
 }
 
+.body
+{
+    background-image: url("/templates/mountain.jpg");
+    background-size: cover;
+
+}
 .headerrow
 {
     font-weight: bold;

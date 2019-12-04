@@ -31,9 +31,7 @@ app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
-goal_1 = ""
-goal_2 = ""
-goal_3 = ""
+goal_names = ["", "", ""]
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
@@ -54,7 +52,7 @@ def index():
     goal_1 = "sleep"
     connection.commit()
     connection.close()
-    return render_template("index.html", goal_1_name = goal_1)
+    return render_template("index.html", goal_names = goal_names)
 
 @app.route("/goal_display", methods=["GET", "POST"])
 @login_required
@@ -65,7 +63,24 @@ def goal_display(number):
     goal_info = str(db.execute("SELECT * FROM users WHERE users = :u", {'u': session['id']}).fetchall()[0])
     goal_name = goal_info.split(",")[number*5+3].strip().strip("'")
     goal_type = goal_info.split(",")[number*5+4].strip().strip("'")
-
+    now = datetime.now()
+    year = now.year
+    month = now.month
+    weekday_num, num_days = calendar.monthrange(year, month) # zero is monday
+    num_weeks = 5
+    if weekday_num == 6 and num_days == 28:
+          num_weeks = 4
+    elif num_days == 31 and (weekday_num == 4 or weekday_num == 5):        # first day is fri/sat, 31 day month
+        num_weeks = 6
+    elif num_days == 30 and weekday_num == 5:        # first day is fri/sat, 31 day month
+        num_weeks = 6
+    if month == 1:
+        prev_month = 12
+        prev_year = year - 1
+    else:
+        prev_month = month - 1
+        prev_year = year
+    prev_weekday_num, prev_num_days = calendar.monthrange(prev_year, prev_month) # zero is monday
     # db.execute("SELECT FROM us")
         # execute a sql query to get goal name, goal type, and user data - done
         # have a variable or variables for the month info-
@@ -73,7 +88,8 @@ def goal_display(number):
         # make a binary_display.html and a numeric_display.html, and pass in date info + user data as variables
     connection.commit()
     connection.close()
-    return apology("to do")
+    if goal_type == "binary":
+        render_template("binary_month.html", num_weeks = num_weeks, goal_names = goal_names)
 
 @app.route("/enter_binary_data", methods=["GET", "POST"])
 @login_required
@@ -94,7 +110,9 @@ def enter_binary_data(number):
         if didIt == None or month == None or year == None:
             return apology("Must fill in all fields!")
 
-        if day > monthrange(year, month)[1]:
+        weekday_num, num_days = calendar.monthrange(year, month) #0-6 is Mon-Sun
+
+        if day > num_days:
             return apology("Invalid day for this month.")
 
 
@@ -109,10 +127,15 @@ def enter_binary_data(number):
         connection.close()
 
        # dates[28, 29, 30]
-       # first day is fri/sat, 31 day month
-       # first day is sat, 30 day month
+
        # binary[]
-        return render_template("binary_month.html")
+        if int(number) == 1:
+           return redirect("goal_display/1")
+        if int(number) == 2:
+           return redirect("goal_display/2")
+        if int(number) == 3:
+           return redirect("goal_display/3")
+
 
 
 @app.route("/goal2", methods=["GET", "POST"])
@@ -178,23 +201,10 @@ def logout():
 
     # Forget any user_id
     session.clear()
-
+    goal_names = ["", "", ""]
     # Redirect user to login form
     return redirect("/")
 
-
-@app.route("/goal3", methods=["GET", "POST"])
-@login_required
-def goal3():
-    connection = sqlite3.connect("tracker.db")
-    db = connection.cursor()
-    if request.method == "GET":
-        connection.commit()
-        connection.close()
-        return apology("to do")
-    connection.commit()
-    connection.close()
-    return apology("to do")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -264,6 +274,7 @@ def set_goals():
     {'query': query, 'name1': goal_1_name, 'type1': goal_1_type, 'year1': year, 'month1': month, 'day1': day,
     'name2': goal_2_name, 'type2': goal_2_type, 'year2': year, 'month2': month, 'day2': day,
     'name3': goal_3_name, 'type3': goal_3_type, 'year3': year, 'month3': month, 'day3': day, 'username': session['user_id']})
+    goal_names = [goal_1_name, goal_2_name, goal_3_name]
     connection.commit()
     connection.close()
     return redirect("/")
