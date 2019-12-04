@@ -103,26 +103,29 @@ def goal_display(number):
     else:
         for i in range(len(dates)):
             if dates[i] == " ":
-                data.append(2)
+                data.append(" ")
             else:
                 # execute some shit
                 var = db.execute("SELECT * FROM numeric_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
                 {'username': session['user_id'], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
                 if len(var) == 0:
-                    data.append(" ")
+                    data.append("--")
                 else:
                     comp = int(str(var[0]).split(",")[5].strip(" ").strip("'").strip(")"))
                     data.append(comp)
 
-    connection.commit()
-    connection.close()
+
 
 
     if goal_type == "binary":
-        x=db.execute("SELECT completed FROM binary_data WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+        x=db.execute("SELECT completed FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
             {'username': session['user_id'], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
         goal_fulfilled=len(x)
-        return render_template("binary_month.html", goals_fulfilled=goals_fulfilled, month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = get_goal_names(), number = number)
+        connection.commit()
+        connection.close()
+        return render_template("binary_month.html", goals_fulfilled=goal_fulfilled, month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = get_goal_names(), number = number)
+    connection.commit()
+    connection.close()
     return render_template("numeric_month.html", month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = get_goal_names(), number = number)
 
 @app.route("/enter_binary_data/<number>", methods=["POST"])
@@ -149,7 +152,7 @@ def enter_binary_data(number):
         db.execute("INSERT INTO binary_goals (user, goal_name, year, month, day, completed) VALUES (:u, :g, :y, :m, :d, :c)",
               {'u': session['user_id'], 'g': get_goal_names()[number - 1], 'y': year, 'm': month, 'd': day, 'c': didIt})
     else:
-        db.execute("UPDATE binary_goals SET completed = :c WHERE username = :u AND goal_name = :g", {'c': didIt, 'u': session['user_id'], 'g': get_goal_names()[number - 1]})
+        db.execute("UPDATE binary_goals SET completed = :c WHERE user = :u AND goal_name = :g", {'c': didIt, 'u': session['user_id'], 'g': get_goal_names()[number - 1]})
     connection.commit()
     connection.close()
     if int(number) == 1:
@@ -180,10 +183,10 @@ def enter_numeric_data(number):
         # get date info
     exists = db.execute("SELECT user, year, month, day FROM numeric_goals WHERE user = :u AND year = :y AND month = :m AND day = :d", {'u': session['user_id'], 'y': year, 'm': month, 'd': day})
     if len(exists.fetchall()) == 0:
-        db.execute("INSERT INTO numeric_goals (user, goal_name, year, month, day, value) VALUES (:u, :g, :y, :m, :d, :c)",
+        db.execute("INSERT INTO numeric_goals (user, goal_name, year, month, day, amount) VALUES (:u, :g, :y, :m, :d, :c)",
               {'u': session['user_id'], 'g': get_goal_names()[number - 1], 'y': year, 'm': month, 'd': day, 'c': value})
     else:
-        db.execute("UPDATE numeric_goals SET completed = :c WHERE username = :u AND goal_name = :g", {'c': value, 'u': session['user_id'], 'g': get_goal_names()[number - 1]})
+        db.execute("UPDATE numeric_goals SET amount = :c WHERE user = :u AND goal_name = :g", {'c': value, 'u': session['user_id'], 'g': get_goal_names()[number - 1]})
     connection.commit()
     connection.close()
     if int(number) == 1:
@@ -301,7 +304,7 @@ def set_goals():
     if request.method == "GET":
         connection.commit()
         connection.close()
-        return render_template("set_goals.html")
+        return render_template("set_goals.html", goal_names = get_goal_names())
     goal_1_name = request.form.get("goal_1_name")
     goal_2_name = request.form.get("goal_2_name")
     goal_3_name = request.form.get("goal_3_name")
