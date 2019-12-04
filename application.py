@@ -87,26 +87,43 @@ def goal_display(number):
     back_pad = [" " for i in range(num_weeks*7 - len(front_pad) - num_days)]
     dates = front_pad + [i for i in range(1, 1+num_days)] + back_pad
     data = []
-    for i in range(len(dates)):
-        if dates[i] == " ":
-            data.append(2)
-        else:
-            # execute some shit
-            var = db.execute("SELECT * FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
-            {'username': session['user_id'], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
-            if len(var) == 0:
+    if goal_type == "binary":
+        for i in range(len(dates)):
+            if dates[i] == " ":
                 data.append(2)
             else:
-                comp = int(str(var[0]).split(",")[5].strip(" ").strip("'").strip(")"))
-                data.append(comp)
+                # execute some shit
+                var = db.execute("SELECT * FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+                {'username': session['user_id'], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
+                if len(var) == 0:
+                    data.append(2)
+                else:
+                    comp = int(str(var[0]).split(",")[5].strip(" ").strip("'").strip(")"))
+                    data.append(comp)
+    else:
+        for i in range(len(dates)):
+            if dates[i] == " ":
+                data.append(2)
+            else:
+                # execute some shit
+                var = db.execute("SELECT * FROM numeric_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+                {'username': session['user_id'], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
+                if len(var) == 0:
+                    data.append(" ")
+                else:
+                    comp = int(str(var[0]).split(",")[5].strip(" ").strip("'").strip(")"))
+                    data.append(comp)
 
     connection.commit()
     connection.close()
-     = db.execute("SELECT c FROM binary_data WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
-        {'username': session['user_id'], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
+
+
     if goal_type == "binary":
-        return render_template("binary_month.html", month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = get_goal_names(), number = number)
-    return apology("to do")
+        x=db.execute("SELECT completed FROM binary_data WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+            {'username': session['user_id'], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
+        goal_fulfilled=len(x)
+        return render_template("binary_month.html", goals_fulfilled=goals_fulfilled, month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = get_goal_names(), number = number)
+    return render_template("numeric_month.html", month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = get_goal_names(), number = number)
 
 @app.route("/enter_binary_data/<number>", methods=["POST"])
 @login_required
@@ -151,22 +168,22 @@ def enter_numeric_data(number):
     month = int(request.form.get("desired_month")) #gives int 1-12
     day = int(request.form.get("desired_day")) #gives int 1-31
     year = int(request.form.get("desired_year"))
-    didIt = int(request.form.get("numeric_tracker")) # will be a number
+    value = int(request.form.get("numeric_tracker")) # will be a number
 
         # if no answer
-    if didIt == None or month == None or year == None:
+    if value == None or month == None or year == None:
         return apology("Must fill in all fields!")
     weekday_num, num_days = calendar.monthrange(year, month) #0-6 is Mon-Sun
 
     if day > num_days:
         return apology("Invalid day for this month.")
         # get date info
-    exists = db.execute("SELECT user, year, month, day FROM binary_goals WHERE user = :u AND year = :y AND month = :m AND day = :d", {'u': session['user_id'], 'y': year, 'm': month, 'd': day})
+    exists = db.execute("SELECT user, year, month, day FROM numeric_goals WHERE user = :u AND year = :y AND month = :m AND day = :d", {'u': session['user_id'], 'y': year, 'm': month, 'd': day})
     if len(exists.fetchall()) == 0:
-        db.execute("INSERT INTO binary_goals (user, goal_name, year, month, day, completed) VALUES (:u, :g, :y, :m, :d, :c)",
-              {'u': session['user_id'], 'g': get_goal_names()[number - 1], 'y': year, 'm': month, 'd': day, 'c': didIt})
+        db.execute("INSERT INTO binary_goals (user, goal_name, year, month, day, value) VALUES (:u, :g, :y, :m, :d, :c)",
+              {'u': session['user_id'], 'g': get_goal_names()[number - 1], 'y': year, 'm': month, 'd': day, 'c': value})
     else:
-        db.execute("UPDATE binary_goals SET completed = :c WHERE username = :u AND goal_name = :g", {'c': didIt, 'u': session['user_id'], 'g': get_goal_names()[number - 1]})
+        db.execute("UPDATE numeric_goals SET completed = :c WHERE username = :u AND goal_name = :g", {'c': value, 'u': session['user_id'], 'g': get_goal_names()[number - 1]})
     connection.commit()
     connection.close()
     if int(number) == 1:
