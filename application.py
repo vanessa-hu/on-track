@@ -8,7 +8,6 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 from helpers import *
-import calendar_funcs
 import calendar
 
 
@@ -49,7 +48,6 @@ def index():
         # nav bar with names of three goals, all of them just have an href to goal_display
         # execute a SQL query and get the goal names to display at the top
         # make an index.html that extends layout.html
-    goal_1 = "sleep"
     connection.commit()
     connection.close()
     return render_template("index.html", goal_names = get_goal_names())
@@ -61,12 +59,10 @@ def goal_display(number):
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
     number = int(number)
-    print(number)
-
     goal_info = str(db.execute("SELECT * FROM users WHERE username = :u", {'u': session['user_id']}).fetchall()[0])
     goal_name = goal_info.split(",")[number*5+3-5].strip().strip("'")
     goal_type = goal_info.split(",")[number*5+4-5].strip().strip("'")
-    print(goal_type)
+    started = int(goal_info.split(",")[number*5].strip().strip("'"))
     now = datetime.now()
     year = now.year
     month = now.month
@@ -113,17 +109,14 @@ def goal_display(number):
                 else:
                     comp = int(str(var[0]).split(",")[5].strip(" ").strip("'").strip(")"))
                     data.append(comp)
-
-
-
-
     if goal_type == "binary":
-        x=db.execute("SELECT completed FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+        x = db.execute("SELECT completed FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
             {'username': session['user_id'], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
         goal_fulfilled=len(x)
+        years = [i for i in range(started, year+1)]
         connection.commit()
         connection.close()
-        return render_template("binary_month.html", goals_fulfilled=goal_fulfilled, month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = get_goal_names(), number = number)
+        return render_template("binary_month.html", goals_fulfilled=goal_fulfilled, month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = get_goal_names(), number = number, years = years)
     connection.commit()
     connection.close()
     return render_template("numeric_month.html", month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = get_goal_names(), number = number)
@@ -134,19 +127,29 @@ def enter_binary_data(number):
     number = int(number)
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
-    month = int(request.form.get("desired_month")) #gives int 1-12
-    day = int(request.form.get("desired_day")) #gives int 1-31
+    month = int(request.form.get("desired_month")) # gives int 1-12
+    day = int(request.form.get("desired_day")) # gives int 1-31
     year = int(request.form.get("desired_year"))
-    didIt = int(request.form.get("binary_tracker")) #will be Yes 1, or No 0
-
-        # if no answer
+    didIt = int(request.form.get("binary_tracker")) # will be Yes 1, or No 0
+    print(month, day, year, didIt)
+    # if no answer
     if didIt == None or month == None or year == None:
         return apology("Must fill in all fields!")
     weekday_num, num_days = calendar.monthrange(year, month) #0-6 is Mon-Sun
 
     if day > num_days:
         return apology("Invalid day for this month.")
-        # get date info
+    if in_the_future(year, month, day):
+        return apology("Can't enter data for the future.")
+    date_check = str(db.execute("SELECT * FROM users WHERE username=:username", {'username': session['user_id']}).fetchall()[0]).split(",")
+    year_check = int(date_check[number*5].strip().strip("'"))
+    month_check = int(date_check[number*5+1].strip().strip("'"))
+    day_check = int(date_check[number*5+2].strip().strip("'"))
+    print(year_check, month_check, day_check)
+    inval = before_start(year, month, day, year_check, month_check, day_check)
+    if inval:
+        return apology("You started tracking this goal after this date.")
+    # get date info
     exists = db.execute("SELECT user, year, month, day FROM binary_goals WHERE user = :u AND year = :y AND month = :m AND day = :d", {'u': session['user_id'], 'y': year, 'm': month, 'd': day})
     if len(exists.fetchall()) == 0:
         db.execute("INSERT INTO binary_goals (user, goal_name, year, month, day, completed) VALUES (:u, :g, :y, :m, :d, :c)",
@@ -180,7 +183,17 @@ def enter_numeric_data(number):
 
     if day > num_days:
         return apology("Invalid day for this month.")
-        # get date info
+    if in_the_future(year, month, day):
+        return apology("Can't enter data for the future.")
+    date_check = str(db.execute("SELECT * FROM users WHERE username=:username", {'username': session['user_id']}).fetchall()[0]).split(",")
+    year_check = int(date_check[number*5].strip().strip("'"))
+    month_check = int(date_check[number*5+1].strip().strip("'"))
+    day_check = int(date_check[number*5+2].strip().strip("'"))
+    print(year_check, month_check, day_check)
+    inval = before_start(year, month, day, year_check, month_check, day_check)
+    if inval:
+        return apology("You started tracking this goal after this date.")
+    # get date info
     exists = db.execute("SELECT user, year, month, day FROM numeric_goals WHERE user = :u AND year = :y AND month = :m AND day = :d", {'u': session['user_id'], 'y': year, 'm': month, 'd': day})
     if len(exists.fetchall()) == 0:
         db.execute("INSERT INTO numeric_goals (user, goal_name, year, month, day, amount) VALUES (:u, :g, :y, :m, :d, :c)",

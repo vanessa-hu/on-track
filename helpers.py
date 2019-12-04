@@ -1,7 +1,7 @@
 import os
 import requests
 import urllib.parse
-
+from datetime import datetime
 from flask import redirect, render_template, request, session
 from functools import wraps
 
@@ -18,7 +18,7 @@ def apology(message, code=400):
                          ("%", "~p"), ("#", "~h"), ("/", "~s"), ("\"", "''")]:
             s = s.replace(old, new)
         return s
-    return render_template("apology.html", top=code, bottom=escape(message)), code
+    return render_template("apology.html", top=code, bottom=escape(message), goal_names=goal_names), code
 
 
 def login_required(f):
@@ -70,3 +70,25 @@ def set_goal_names(item1, item2, item3):
     goal_names[0] = item1
     goal_names[1] = item2
     goal_names[2] = item3
+
+def in_the_future(year, month, day):
+    now = datetime.now()
+    this_year = now.year
+    this_month = now.month
+    this_day = now.day
+    if year > this_year:
+        return True
+    if year == this_year and month > this_month:
+        return True
+    if year == this_year and month == this_month and day > this_day:
+        return True
+    return False
+
+def before_start(year, month, day, start_year, start_month, start_day):
+    if year < start_year:
+        return True
+    if year == start_year and month < start_month:
+        return True
+    if year == start_year and month == start_month and day < start_day:
+        return True
+    return False

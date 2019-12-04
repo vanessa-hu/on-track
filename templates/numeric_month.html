@@ -67,9 +67,9 @@
 
             </select>
             <select name="desired_year">
-
-                    <option>2018</option>
-                    <option>2019</option>
+                    {% for i in years %}
+                    <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
 
             </select>
 
