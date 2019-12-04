@@ -46,17 +46,19 @@ def index():
         # nav bar with names of three goals, all of them just have an href to goal_display
         # execute a SQL query and get the goal names to display at the top
         # make an index.html that extends layout.html
+    goal_1 = "sleep"
     connection.commit()
     connection.close()
-    return render_template("index.html")
+    return render_template("index.html", goal_1_name = goal_1)
 
 @app.route("/goal_display", methods=["GET", "POST"])
 @login_required
-def goal_display():
+def goal_display(number):
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
     # insert code here
     # outline:
+    # db.execute("SELECT FROM us")
         # execute a sql query to get goal name, goal type, and user data
         # have a variable or variables for the month info
         # render the calendar for the appropriate month, and render the data entry form for the appropriate type
@@ -73,17 +75,19 @@ def enter_data_1():
     if request.method == "GET":
         connection.commit()
         connection.close()
-        return render_template("enter_data_1.html")
+        return render_template("binary_month.html")
     else:
-        didIt = request.form.get("tracker")
+        month = int(request.form.get("desired_month")) #gives int 1-12
+        day = int(request.form.get("desired_day")) #gives int 1-31
+        year = request.form.get("desired_year")
+        didIt = request.form.get("binary_tracker") #will be Yes or No
 
         # if no answer
-        if didIt == None:
-            return apology("Must return an answer!")
+        if didIt == None or month == None or year == None:
+            return apology("Must fill in all fields!")
 
 
         # get date info
-        now = datetime.datetime.now()
         y = now.year
         m = now.month
         d = now.day

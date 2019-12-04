@@ -8,23 +8,75 @@
     <h2>Goal 1{{ name }}!</h2><br>
     <p>How on top of your goal have you been?</p>
 
-    <form>
-        <select name="Desired Month">
+    <form action="/enter_binary_data" method="post">
+        <select name="desired_month">
 
-                    <option>January</option>
-                    <option>Feburary</option>
-                    <option>March</option>
-                    <option>April</option>
-                    <option>May</option>
-                    <option>June</option>
-                    <option>July</option>
-                    <option>August</option>
-                    <option>September</option>
-                    <option>October</option>
-                    <option>November</option>
-                    <option>December</option>
+                    <option value= "1">January</option>
+                    <option value= "2">Feburary</option>
+                    <option value= "3">March</option>
+                    <option value= "4">April</option>
+                    <option value= "5">May</option>
+                    <option value= "6">June</option>
+                    <option value= "7">July</option>
+                    <option value= "8">August</option>
+                    <option value= "9">September</option>
+                    <option value= "10">October</option>
+                    <option value= "11">November</option>
+                    <option value= "12">December</option>
+
 
             </select>
+
+                    <select name="desired_day">
+
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                    <option>6</option>
+                    <option>7</option>
+                    <option>8</option>
+                    <option>9</option>
+                    <option>10</option>
+                    <option>11</option>
+                    <option>12</option>
+                    <option>13</option>
+                    <option>14</option>
+                    <option>15</option>
+                    <option>16</option>
+                    <option>17</option>
+                    <option>18</option>
+                    <option>19</option>
+                    <option>20</option>
+                    <option>21</option>
+                    <option>22</option>
+                    <option>23</option>
+                    <option>24</option>
+                    <option>25</option>
+                    <option>26</option>
+                    <option>27</option>
+                    <option>28</option>
+                    <option>29</option>
+                    <option>30</option>
+                    <option>31</option>
+
+
+
+            </select>
+            <select name="desired_year">
+
+                    <option value= "1">2018</option>
+                    <option>2019</option>
+
+            </select>
+
+             <select name = "binary_tracker">
+                    <option>Yes</option>
+                    <option>No</option>
+
+            </select>
+            <button class="btn btn-primary" type="submit">Track!</button>
     </form>
 <body>
 
