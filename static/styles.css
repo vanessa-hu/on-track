@@ -38,6 +38,9 @@ main
 
     /* center contents */
     text-align: center;
+    background-image: url("mountain.jpg");
+    background-repeat:no-repeat;
+    background-size:cover;
 }
 
 main img

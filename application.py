@@ -8,8 +8,8 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 from helpers import apology, login_required, pass_strong
+import calendar_funcs
 import calendar
-from calendar import *
 
 
 # Configure application
@@ -61,17 +61,14 @@ def index():
 def goal_display(number):
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
-    if number == 1:
-        goal_info = db.execute("SELECT goal_1_name, goal_1_type FROM users WHERE users = :u", {'u': session['id']})
-    elif number == 2:
-        goal_info = db.execute("SELECT goal_2_name, goal_2_type FROM users WHERE users = :u", {'u': session['id']})
-    else:
-        goal_info = db.execute("SELECT goal_3_name, goal_3_type FROM users WHERE users = :u", {'u': session['id']})
-    # insert code here
-    # outline:
+    number = int(number)
+    goal_info = str(db.execute("SELECT * FROM users WHERE users = :u", {'u': session['id']}).fetchall()[0])
+    goal_name = goal_info.split(",")[number*5+3].strip().strip("'")
+    goal_type = goal_info.split(",")[number*5+4].strip().strip("'")
+
     # db.execute("SELECT FROM us")
-        # execute a sql query to get goal name, goal type, and user data
-        # have a variable or variables for the month info
+        # execute a sql query to get goal name, goal type, and user data - done
+        # have a variable or variables for the month info-
         # render the calendar for the appropriate month, and render the data entry form for the appropriate type
         # make a binary_display.html and a numeric_display.html, and pass in date info + user data as variables
     connection.commit()
@@ -98,7 +95,7 @@ def enter_binary_data(number):
             return apology("Must fill in all fields!")
 
         if day > monthrange(year, month)[1]:
-            apology("Invalid day for this month.")
+            return apology("Invalid day for this month.")
 
 
         # get date info
