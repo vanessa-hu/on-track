@@ -50,22 +50,21 @@ def index():
         # make an index.html that extends layout.html
     connection.commit()
     connection.close()
-    return render_template("index.html", goal_names = get_goal_names())
+    return render_template("index.html", goal_names = get_goal_names(), year = int(datetime.now().year), month = int(datetime.now().month))
 
 # citation: https://stackoverflow.com/questions/26954122/how-can-i-pass-arguments-into-redirecturl-for-of-flask
-@app.route("/goal_display/<number>")
+@app.route("/goal_display/<number>/<year>/<month>")
 @login_required
-def goal_display(number):
+def goal_display(number, year = datetime.now().year, month = datetime.now().month):
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
     number = int(number)
+    year = int(year)
+    month = int(month)
     goal_info = str(db.execute("SELECT * FROM users WHERE username = :u", {'u': session['user_id']}).fetchall()[0])
     goal_name = goal_info.split(",")[number*5+3-5].strip().strip("'")
     goal_type = goal_info.split(",")[number*5+4-5].strip().strip("'")
     started = int(goal_info.split(",")[number*5].strip().strip("'"))
-    now = datetime.now()
-    year = now.year
-    month = now.month
     weekday_num, num_days = calendar.monthrange(year, month) # zero is monday
     num_weeks = 5
     if weekday_num == 6 and num_days == 28:
@@ -121,10 +120,17 @@ def goal_display(number):
     connection.close()
     return render_template("numeric_month.html", month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = get_goal_names(), number = number)
 
-@app.route("/enter_binary_data/<number>", methods=["POST"])
+@app.route("/change_month/<number>", methods = ["POST"])
 @login_required
-def enter_binary_data(number):
+def change_month(number):
+    return redirect("/goal_display/" + str(number)+"/" + request.form.get("desired_year") + "/" + request.form.get("desired_month"))
+
+@app.route("/enter_binary_data/<number>/<year>/<month>", methods=["POST"])
+@login_required
+def enter_binary_data(number, year = datetime.now().year, month = datetime.now().month):
     number = int(number)
+    year = int(year)
+    month = int(month)
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
     month = int(request.form.get("desired_month")) # gives int 1-12
@@ -159,16 +165,18 @@ def enter_binary_data(number):
     connection.commit()
     connection.close()
     if int(number) == 1:
-          return redirect("/goal_display/1")
+          return redirect("/goal_display/1/"+str(year)+"/"+str(month))
     if int(number) == 2:
-          return redirect("/goal_display/2")
+          return redirect("/goal_display/2/"+str(year)+"/"+str(month))
     else:
-          return redirect("/goal_display/3")
+          return redirect("/goal_display/3/"+str(year)+"/"+str(month))
 
-@app.route("/enter_numeric_data/<number>", methods=["POST"])
+@app.route("/enter_numeric_data/<number>/<year>/<month>", methods=["POST"])
 @login_required
-def enter_numeric_data(number):
+def enter_numeric_data(number, year = datetime.now().year, month = datetime.now().month):
     number = int(number)
+    year = int(year)
+    month = int(month)
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
     month = int(request.form.get("desired_month")) #gives int 1-12
@@ -203,11 +211,11 @@ def enter_numeric_data(number):
     connection.commit()
     connection.close()
     if int(number) == 1:
-          return redirect("/goal_display/1")
+          return redirect("/goal_display/1/"+str(year)+"/"+str(month))
     if int(number) == 2:
-          return redirect("/goal_display/2")
+          return redirect("/goal_display/2/"+str(year)+"/"+str(month))
     else:
-          return redirect("/goal_display/3")
+          return redirect("/goal_display/3/"+str(year)+"/"+str(month))
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
