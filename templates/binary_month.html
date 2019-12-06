@@ -6,7 +6,7 @@
 
 {% block main %}
     <h2>{{ name }}</h2><br>
-    <p>How on top of your goal have you been?</p>
+    <p class = "padding">How on top of your goal have you been?</p>
     <form action="/enter_binary_data/{{ number }}/{{ year }}/{{ month }}" method="post">
         <p>Enter data for today or for any past date since you started tracking this goal.</p>
         <select name="desired_month">
@@ -82,7 +82,8 @@
 <h3>Viewing {{ month }}/{{ year }}</h3>
 <p>Key: a green cell means that you have completed your goal for that date. A red cell indicates that you did not complete your goal. A white cell indicates that no data has been entered.</p>
 {% if num_weeks == 4 %}
-    <table style="width:100%">
+<div class = "padding">
+    <table class = "padding">
   <tr>
     <th>Sunday</th>
     <th>Monday</th>
@@ -128,9 +129,9 @@
     <td class="binary{{ data[27] }}">{{ dates[27] }}</td>
   </tr>
 </table>
-
+</div>
 {% elif num_weeks == 5 %}
-<table style="width:100%">
+<table class = "padding">
   <tr>
     <th>Sunday</th>
     <th>Monday</th>
@@ -187,7 +188,7 @@
 </table>
 
 {% else %}
-<table style="width:100%">
+<table class = "padding">
   <tr>
     <th>Sunday</th>
     <th>Monday</th>

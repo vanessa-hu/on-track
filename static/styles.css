@@ -70,10 +70,25 @@ body
     border-bottom-style: solid;
 }
 
+table
+{
+    width: 100%;
+}
 td
 {
     column-width: 200px;
     padding: 8px;
+}
+
+h2
+{
+    font-family: monospace;
+    font-size: 60px;
+}
+
+.padding
+{
+    padding: 50px;
 }
 .total
 {
@@ -94,3 +109,5 @@ td
 {
     background-color: white;
 }
+
+
