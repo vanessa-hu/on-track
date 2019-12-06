@@ -51,7 +51,40 @@ def index():
         # make an index.html that extends layout.html
     connection.commit()
     connection.close()
-    return render_template("index.html", goal_names = session["user_id"][1:], year = int(datetime.now().year), month = int(datetime.now().month))
+    year = int(datetime.now().year)
+    month = int(datetime.now().month)
+
+
+
+    info = []
+
+    for i in range(3):
+        goal_info = str(db.execute("SELECT * FROM users WHERE username = :u", {'u': session['user_id'][0]}).fetchall()[0])
+        goal_name = goal_info.split(",")[number*5+3-5].strip().strip("'")
+        goal_type = goal_info.split(",")[number*5+4-5].strip().strip("'")
+
+        if goal_type = "binary":
+            x = db.execute("SELECT completed FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+            {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
+            goal_fulfilled=len(x)
+            if goal_fulfilled == 0:
+                text += "Completed Today: No"
+            elif goal_fulfilled == 1:
+                text = "Completed Today: Yes"
+            else:
+                text = "Completed Today: Not Logged"
+
+        else:
+            var = db.execute("SELECT * FROM numeric_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+                {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
+                if len(var) == 0:
+                    text = "Num Achieved: Not Logged"
+                else:
+                    comp = int(str(var[0]).split(",")[5].strip(" ").strip("'").strip(")"))
+                    text = "Num Achieved: " + comp
+        info.append(text)
+
+    return render_template("index.html", goal_names = session["user_id"][1:], year = year, month = month, info = info)
 
 # citation: https://stackoverflow.com/questions/26954122/how-can-i-pass-arguments-into-redirecturl-for-of-flask
 @app.route("/goal_display/<number>/<year>/<month>")
@@ -157,7 +190,7 @@ def enter_binary_data(number, year = datetime.now().year, month = datetime.now()
     print(date_check)
     year_check = int(date_check[number*5].strip().strip("'"))
     month_check = int(date_check[number*5+1].strip().strip("'"))
-    day_check = int(date_check[number*5+2].strip().strip("'"))
+    day_check = int(date_check[number*5+2].strip().strip("'").strip(")"))
     print(year_check, month_check, day_check)
     print(year, month, day)
     inval = before_start(year, month, day, year_check, month_check, day_check)
@@ -207,7 +240,7 @@ def enter_numeric_data(number, year = datetime.now().year, month = datetime.now(
     print(date_check)
     year_check = int(date_check[number*5].strip().strip("'"))
     month_check = int(date_check[number*5+1].strip().strip("'"))
-    day_check = int(date_check[number*5+2].strip().strip("'"))
+    day_check = int(date_check[number*5+2].strip().strip("'").strip(")"))
     print(year_check, month_check, day_check)
     inval = before_start(year, month, day, year_check, month_check, day_check)
     if inval:
@@ -366,9 +399,8 @@ def new_quotes():
     if request.method == "GET":
         return render_template('quotes.html', goal_names = session['user_id'][1:])
     else:
-        moodd = request.form.get('mood')
-        quote = quotesCalculator(moodd)
-        print (mood, quote)
+        mood = request.form.get('mood')
+        quote = quotesCalculator(mood)
 
         return render_template('quotes1.html', mood = mood, quote=quote, goal_names = session['user_id'][1:])
 
