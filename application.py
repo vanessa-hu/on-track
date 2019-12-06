@@ -116,6 +116,10 @@ def goal_display(number, year = datetime.now().year, month = datetime.now().mont
         connection.commit()
         connection.close()
         return render_template("binary_month.html", goals_fulfilled=goal_fulfilled, month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = get_goal_names(), number = number, years = years)
+    x = db.execute("SELECT amount FROM numeric_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+        {'username': session['user_id'], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
+    goal_fulfilled=len(x)
+    years = [i for i in range(started, year+1)]
     connection.commit()
     connection.close()
     return render_template("numeric_month.html", month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = get_goal_names(), number = number)
@@ -152,6 +156,7 @@ def enter_binary_data(number, year = datetime.now().year, month = datetime.now()
     month_check = int(date_check[number*5+1].strip().strip("'"))
     day_check = int(date_check[number*5+2].strip().strip("'"))
     print(year_check, month_check, day_check)
+    print(year, month, day)
     inval = before_start(year, month, day, year_check, month_check, day_check)
     if inval:
         return apology("You started tracking this goal after this date.")
@@ -224,8 +229,6 @@ def login():
 
     # Forget any user_id
     session.clear()
-
-    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
         connection = sqlite3.connect("tracker.db")
         db = connection.cursor()
@@ -270,8 +273,6 @@ def login():
 @app.route("/logout")
 def logout():
     """Log user out"""
-
-    # Forget any user_id
     session.clear()
     set_goal_names("", "", "")
     # Redirect user to login form
@@ -329,6 +330,8 @@ def set_goals():
     goal_1_name = request.form.get("goal_1_name")
     goal_2_name = request.form.get("goal_2_name")
     goal_3_name = request.form.get("goal_3_name")
+    if goal_1_name.lower() == goal_2_name.lower() or goal_2_name.lower() == goal_3_name.lower() or goal_1_name.lower() == goal_3_name.lower():
+        return apology("No two goals can be the same. Click \"Set Goals\" on the upper left to try again.")
     goal_1_type = request.form.get("goal_1_type")
     goal_2_type = request.form.get("goal_2_type")
     goal_3_type = request.form.get("goal_3_type")
@@ -350,33 +353,6 @@ def set_goals():
     connection.commit()
     connection.close()
     return redirect("/")
-
-@app.route("/enter_binary", methods=["POST"])
-@login_required
-def enter_binary():
-    connection = sqlite3.connect("tracker.db")
-    db = connection.cursor()
-    completed = request.form.get("completed")
-    goal_name = request.form.get("goal_name")
-    year = request.form.get("year")
-    month = request.form.get("month")
-    day = request.form.get("day")
-    return render_template("goal_display_binary.html")
-
-@app.route("/enter_numeric", methods=["POST"])
-@login_required
-def enter_numeric():
-    connection = sqlite3.connect("tracker.db")
-    db = connection.cursor()
-    value = request.form.get("value")
-    goal_name = request.form.get("goal_name")
-    year = request.form.get("year")
-    month = request.form.get("month")
-    day = request.form.get("day")
-    # insert data into appropriate table
-    db.execute("INSERT INTO ")
-    return render_template("goal_display_numeric.html")
-
 
 def errorhandler(e):
     """Handle error"""

@@ -33,11 +33,17 @@
             </button>
             <div class="collapse navbar-collapse" id="navbar">
                 {% if session.user_id %}
+                    {% if goal_names[0] == "None" %}
+                    <ul class="navbar-nav mr-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="/set_goals">Set Goals</a></li>
+                    </ul>
+                    {% else %}
                     <ul class="navbar-nav mr-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/goal_display/1/{{ year }}/{{ month }}">{{ goal_names[0] }}</a></li>
                         <li class="nav-item"><a class="nav-link" href="/goal_display/2/{{ year }}/{{ month }}">{{ goal_names[1] }}</a></li>
                         <li class="nav-item"><a class="nav-link" href="/goal_display/3/{{ year }}/{{ month }}">{{ goal_names[2] }}</a></li>
                     </ul>
+                    {% endif %}
                     <ul class="navbar-nav ml-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
                     </ul>

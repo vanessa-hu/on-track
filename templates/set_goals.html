@@ -9,7 +9,10 @@
     <h2>Set Goals</h2><br>
 
     <form action="/set_goals" method="post">
-
+        <p>Welcome to On Track! Set the names and types of your goals below and get started tracking right away!</p>
+        <p>A "Binary" goal indicates a yes/no goal (e.g. did I go to the gym?).</p>
+        <p>A "Numeric" goal indicates a goal best measured on a numerical scale (e.g. how many hours of sleep did I get last night?)</p>
+        <p>Make sure your goals all have different names (this is case-insensitive, so "dishes" and "Dishes" will be counted as the same name).</p>
         <div class="form-group">
             <input autocomplete="off" autofocus class="form-control" name="goal_1_name" placeholder="Goal 1 Name" type="text">
             <select name="goal_1_type">

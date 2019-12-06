@@ -5,12 +5,10 @@
 {% endblock %}
 
 {% block main %}
-    <h2>Goal 1{{ name }}!</h2><br>
+    <h2>{{ name }}</h2><br>
     <p>How on top of your goal have you been?</p>
-
-
     <form action="/enter_numeric_data/{{ number }}/{{ year }}/{{ month }}" method="post">
-        <p></p>
+        <p>Enter data for today or for any past date since you started tracking this goal.</p>
         <select name="desired_month">
 
                     <option value= "1">January</option>
@@ -26,46 +24,44 @@
                     <option value= "11">November</option>
                     <option value= "12">December</option>
 
-
             </select>
 
                     <select name="desired_day">
 
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                    <option>6</option>
-                    <option>7</option>
-                    <option>8</option>
-                    <option>9</option>
-                    <option>10</option>
-                    <option>11</option>
-                    <option>12</option>
-                    <option>13</option>
-                    <option>14</option>
-                    <option>15</option>
-                    <option>16</option>
-                    <option>17</option>
-                    <option>18</option>
-                    <option>19</option>
-                    <option>20</option>
-                    <option>21</option>
-                    <option>22</option>
-                    <option>23</option>
-                    <option>24</option>
-                    <option>25</option>
-                    <option>26</option>
-                    <option>27</option>
-                    <option>28</option>
-                    <option>29</option>
-                    <option>30</option>
-                    <option>31</option>
-
-
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                      <option>6</option>
+                      <option>7</option>
+                      <option>8</option>
+                      <option>9</option>
+                      <option>10</option>
+                      <option>11</option>
+                      <option>12</option>
+                      <option>13</option>
+                      <option>14</option>
+                      <option>15</option>
+                      <option>16</option>
+                      <option>17</option>
+                      <option>18</option>
+                      <option>19</option>
+                      <option>20</option>
+                      <option>21</option>
+                      <option>22</option>
+                      <option>23</option>
+                      <option>24</option>
+                      <option>25</option>
+                      <option>26</option>
+                      <option>27</option>
+                      <option>28</option>
+                      <option>29</option>
+                      <option>30</option>
+                      <option>31</option>
 
             </select>
+
             <select name="desired_year">
                     {% for i in years %}
                     <option value="{{ i }}">{{ i }}</option>
@@ -75,21 +71,12 @@
 
              <input autocomplete="off" autofocus class="form-control" name="numeric_tracker" placeholder="Value" type="number" min="0">
 
-
-		<div class="row">
 			  <button class="btn btn-primary" type="submit">Track!</button>
 
-		</div>
-	</div>
-
     </form>
-    <script>
-
-
-</script>
 
 <body>
-<h3>{{month}}{{year}}</h3>
+<h3>Viewing {{month}}/{{year}}</h3>
 {% if num_weeks == 4 %}
     <table style="width:100%">
   <tr>
@@ -205,7 +192,6 @@
     <th>Thursday</th>
     <th>Friday</th>
     <th>Saturday</th>
-
   </tr>
     <tr>
     <td><p>{{ dates[0] }}</p><p>{{ data[0] }}</p></td>
@@ -262,7 +248,7 @@
 </table>
 {% endif %}
 <form action="/change_month/{{ number }}" method="post">
-        <p>Switch Month</p>
+        <p>Want to view data for a different month? Enter your desired month here!</p>
         <select name="desired_month">
 
                     <option value= "1">January</option>
@@ -281,114 +267,13 @@
           </select>
             <select name="desired_year">
                     {% for i in years %}
-                    <option value="{{ i }}">{{ i }}</option>
+                      <option value="{{ i }}">{{ i }}</option>
                     {% endfor %}
-
             </select>
 
-		<div class="row">
-			  <button class="btn btn-primary" type="submit">View This Month!</button>
-
-		</div>
-	</div>
+			  <button class="btn btn-primary" type="submit">View Data For This Month!</button>
 
     </form>
-<!--    <div class="month">
-  <ul>
-    <li class="prev">&#10094;</li>
-    <li class="next">&#10095;</li>
-    <li>August<br><span style="font-size:18px">2017</span></li>
-  </ul>
-</div> -->
-
-
-
-<!--https://medium.com/@nitinpatel_20236/challenge-of-building-a-calendar-witd-pure-javascript-a86f1303267d-->
-
-
-<!--        <form action="/enter_binary" method="post">
-
-        <select name = "tracker">
-                    <option>Yes! :)</option>
-                    <option>No :(</option>
-
-            </select>
-        <button class="btn btn-primary" type="submit">Track!</button>
-
-    </form>
-
-
-<div class="container col-sm-4 col-md-7 col-lg-4 mt-5">
-    <div class="card">
-        <h3 class="card-header" id="montdAndYear"></h3>
-        <table class="table table-bordered table-responsive-sm" id="calendar">
-            <tdead>
-            <tr>
-                <td>Sun</td>
-                <td>Mon</td>
-                <td>Tue</td>
-                <td>Wed</td>
-                <td>tdu</td>
-                <td>Fri</td>
-                <td>Sat</td>
-            </tr>
-            </tdead>
-
-            <tbody id="calendar-body">
-
-            </tbody>
-        </table>
-
-        <div class="form-inline">
-
-            <button class="btn btn-outline-primary col-sm-6" id="previous" onclick="previous()">Previous</button>
-
-            <button class="btn btn-outline-primary col-sm-6" id="next" onclick="next()">Next</button>
-        </div>
-        <br/>
-        <form class="form-inline">
-            <label class="lead mr-2 ml-2" for="montd">Jump To: </label>
-            <select class="form-control col-sm-4" name="montd" id="montd" onchange="jump()">
-                <option value=0>Jan</option>
-                <option value=1>Feb</option>
-                <option value=2>Mar</option>
-                <option value=3>Apr</option>
-                <option value=4>May</option>
-                <option value=5>Jun</option>
-                <option value=6>Jul</option>
-                <option value=7>Aug</option>
-                <option value=8>Sep</option>
-                <option value=9>Oct</option>
-                <option value=10>Nov</option>
-                <option value=11>Dec</option>
-            </select>
-
-
-            <label for="year"></label><select class="form-control col-sm-4" name="year" id="year" onchange="jump()">
-            <!-- FIGURE OUT LOGIC OF RESTRICTING YEARS --
-            <option value=2018>2018</option>
-            <option value=2019>2019</option>
-
-        </select></form>
-    </div>
-</div>
-<!--<button name="jump" onclick="jump()">Go</button>--
-<script src="script.js"></script>
-
-<!-- Optional JavaScript for bootstrap --
-<!-- jQuery first, tden Popper.js, tden Bootstrap JS --
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
-        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
-        crossorigin="anonymous"></script>
-<script src="https://stackpatd.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
-        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
-        crossorigin="anonymous"></script>
-
--->
-<>
 </body>
 </html>
 {% endblock %}
