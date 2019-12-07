@@ -14,8 +14,8 @@ def quotesCalculator(mood):
         quote= ['I may look calm, but in my mind I have killed you three times','Anger is never without a reason, but seldom with a good one.','Channel your anger into productivity.']
         return(random.choice(quote))
     elif mood == 'stressed':
-        quote= ['It is not the load you carry that breaks you down. It is the way you carry it.','Something it takes an overwhelming breakdown to have an undeniable breakthrough.','']
+        quote= ['It is not the load you carry that breaks you down. It is the way you carry it.','Something it takes an overwhelming breakdown to have an undeniable breakthrough.','A year from now, everything you are stressing out about will not even matter.']
         return(random.choice(quote))
     elif mood == 'scared':
-        quote= ['It is okay to be scared. Being scared means you are about to do something really, really brave.','','']
+        quote= ['It is okay to be scared. Being scared means you are about to do something really, really brave.','There is no point of being scared of trying','']
         return(random.choice(quote))

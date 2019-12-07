@@ -18,7 +18,7 @@ def apology(message, code=400):
                          ("%", "~p"), ("#", "~h"), ("/", "~s"), ("\"", "''")]:
             s = s.replace(old, new)
         return s
-    return render_template("apology.html", top=code, bottom=escape(message), goal_names=goal_names, year = int(datetime.now().year), month = int(datetime.now().month)), code
+    return render_template("apology.html", top=code, bottom=escape(message), goal_names = session["user_id"][1:], year = int(datetime.now().year), month = int(datetime.now().month)), code
 
 
 def login_required(f):

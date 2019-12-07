@@ -6,7 +6,7 @@ from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta
 from helpers import *
 import calendar
 from quotes import quotesCalculator
@@ -51,45 +51,55 @@ def index():
         # make an index.html that extends layout.html
     connection.commit()
     connection.close()
-    year = int(datetime.now().year)
-    month = int(datetime.now().month)
-
+    now = datetime.now() - timedelta(hours=5)
+    year = int(now.year)
+    month = int(now.month)
+    day = int(now.day)
+    print(year)
+    print(month)
+    print(day)
 
 
     info = []
 
-    for i in range(3):
+    for i in range(1,4):
+        connection = sqlite3.connect("tracker.db")
+        db = connection.cursor()
         goal_info = str(db.execute("SELECT * FROM users WHERE username = :u", {'u': session['user_id'][0]}).fetchall()[0])
-        goal_name = goal_info.split(",")[number*5+3-5].strip().strip("'")
-        goal_type = goal_info.split(",")[number*5+4-5].strip().strip("'")
+        goal_name = goal_info.split(",")[i*5+3-5].strip().strip("'")
+        goal_type = goal_info.split(",")[i*5+4-5].strip().strip("'")
 
-        if goal_type = "binary":
+        if goal_type == "binary":
             x = db.execute("SELECT completed FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
-            {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
-            goal_fulfilled=len(x)
-            if goal_fulfilled == 0:
-                text += "Completed Today: No"
-            elif goal_fulfilled == 1:
+            {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': day}).fetchall()
+            print(x)
+            if not x:
+                text = "Completed Today: Not Logged"
+            elif x[0][0] == 1:
                 text = "Completed Today: Yes"
             else:
-                text = "Completed Today: Not Logged"
+                text = "Completed Today: No"
+
 
         else:
             var = db.execute("SELECT * FROM numeric_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
-                {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
-                if len(var) == 0:
-                    text = "Num Achieved: Not Logged"
-                else:
-                    comp = int(str(var[0]).split(",")[5].strip(" ").strip("'").strip(")"))
-                    text = "Num Achieved: " + comp
+                {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': day}).fetchall()
+            if len(var) == 0:
+                text = "Num Achieved: Not Logged"
+            else:
+                comp = int(str(var[0]).split(",")[5].strip(" ").strip("'").strip(")"))
+                text = "Num Achieved: " + comp
+
         info.append(text)
+    connection.commit()
+    connection.close()
 
     return render_template("index.html", goal_names = session["user_id"][1:], year = year, month = month, info = info)
 
 # citation: https://stackoverflow.com/questions/26954122/how-can-i-pass-arguments-into-redirecturl-for-of-flask
 @app.route("/goal_display/<number>/<year>/<month>")
 @login_required
-def goal_display(number, year = datetime.now().year, month = datetime.now().month):
+def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, month = (datetime.now() - timedelta(hours=5)).month):
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
     number = int(number)
@@ -166,7 +176,7 @@ def change_month(number):
 
 @app.route("/enter_binary_data/<number>/<year>/<month>", methods=["POST"])
 @login_required
-def enter_binary_data(number, year = datetime.now().year, month = datetime.now().month):
+def enter_binary_data(number, year = (datetime.now() - timedelta(hours=5)).year, month = datetime.now() - (timedelta(hours=5)).month):
     number = int(number)
     year = int(year[0])
     month = int(month)
@@ -214,7 +224,7 @@ def enter_binary_data(number, year = datetime.now().year, month = datetime.now()
 
 @app.route("/enter_numeric_data/<number>/<year>/<month>", methods=["POST"])
 @login_required
-def enter_numeric_data(number, year = datetime.now().year, month = datetime.now().month):
+def enter_numeric_data(number, year = (datetime.now() - timedelta(hours=5)).year, month = (datetime.now() - timedelta(hours=5)).month):
     number = int(number)
     print(year)
     year = int(year)
@@ -375,9 +385,10 @@ def set_goals():
     goal_3_type = request.form.get("goal_3_type")
     if not goal_1_name or not goal_2_name or not goal_3_name:
         return apology("goal name cannot be blank")
-    year = datetime.now().year
-    month = datetime.now().month
-    day = datetime.now().day
+    now = datetime.now() - timedelta(hours=5)
+    year = now.year
+    month = now.month
+    day = now.day
     query = "UPDATE users SET goal_1_name, goal_1_type, goal_1_year, goal_1_month, goal_1_day, goal_2_name, goal_2_type, goal_2_year, goal_2_month, goal_2_day, goal_3_name, goal_2_type, goal_3_year, goal_3_month, goal_3_day)"
     db.execute('''UPDATE users SET goal_1_name=:name1, goal_1_type=:type1, goal_1_year=:year1, goal_1_month=:month1, goal_1_day=:day1,
     goal_2_name=:name2, goal_2_type=:type2, goal_2_year=:year2, goal_2_month=:month2, goal_2_day=:day2,

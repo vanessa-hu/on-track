@@ -17,6 +17,12 @@
     <h3> Today's Specs:</h3>
     <br>
 
+    {% for i in range(3) %}
+    <h3>{{ goal_names[i] }}</h3>
+    <br>
+    <p>{{ info[i] }}</p>
+    <br>
+    {% endfor %}
 
 
 {% endblock %}
