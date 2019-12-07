@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from helpers import *
 import calendar
 from quotes import quotesCalculator
-
+# citation: https://stackoverflow.com/questions/46402022/subtract-hours-and-minutes-from-time
 
 # Configure application
 app = Flask(__name__)

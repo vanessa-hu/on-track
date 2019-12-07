@@ -1,7 +1,7 @@
 import os
 import requests
 import urllib.parse
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import redirect, render_template, request, session
 from functools import wraps
 
@@ -18,7 +18,7 @@ def apology(message, code=400):
                          ("%", "~p"), ("#", "~h"), ("/", "~s"), ("\"", "''")]:
             s = s.replace(old, new)
         return s
-    return render_template("apology.html", top=code, bottom=escape(message), goal_names = session["user_id"][1:], year = int(datetime.now().year), month = int(datetime.now().month)), code
+    return render_template("apology.html", top=code, bottom=escape(message), goal_names = session["user_id"][1:], year = int((datetime.now() - timedelta(hours=5)).year), month = int((datetime.now() - timedelta(hours=5)).month)), code
 
 
 def login_required(f):
