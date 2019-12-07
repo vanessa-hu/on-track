@@ -17,5 +17,5 @@ def quotesCalculator(mood):
         quote= ['It is not the load you carry that breaks you down. It is the way you carry it.','Something it takes an overwhelming breakdown to have an undeniable breakthrough.','A year from now, everything you are stressing out about will not even matter.']
         return(random.choice(quote))
     elif mood == 'scared':
-        quote= ['It is okay to be scared. Being scared means you are about to do something really, really brave.','There is no point of being scared of trying','']
+        quote= ['It is okay to be scared. Being scared means you are about to do something really, really brave.','There is no point of being scared of trying','Everything worth doing starts with being scared.']
         return(random.choice(quote))

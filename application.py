@@ -61,6 +61,9 @@ def index():
 
 
     info = []
+    images = []
+    logged_pic = "https://images.unsplash.com/photo-1456071950267-1b8deae9e997?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2300&q=80"
+    not_logged_pic = "https://images.unsplash.com/photo-1486895756674-b48b9b2eacf3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80"
 
     for i in range(1,4):
         connection = sqlite3.connect("tracker.db")
@@ -72,13 +75,16 @@ def index():
         if goal_type == "binary":
             x = db.execute("SELECT completed FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
             {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': day}).fetchall()
-            print(x)
+
             if not x:
                 text = "Completed Today: Not Logged"
+                images.append(not_logged_pic)
             elif x[0][0] == 1:
                 text = "Completed Today: Yes"
+                images.append(logged_pic)
             else:
                 text = "Completed Today: No"
+                images.append(logged_pic)
 
 
         else:
@@ -86,24 +92,32 @@ def index():
                 {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': day}).fetchall()
             if len(var) == 0:
                 text = "Num Achieved: Not Logged"
+                images.append(not_logged_pic)
             else:
                 comp = int(str(var[0]).split(",")[5].strip(" ").strip("'").strip(")"))
                 text = "Num Achieved: " + comp
+                images.append(logged_pic)
 
         info.append(text)
+
     connection.commit()
     connection.close()
 
-    return render_template("index.html", goal_names = session["user_id"][1:], year = year, month = month, info = info)
+    return render_template("index.html", goal_names = session["user_id"][1:], year = year, month = month, info = info, images = images)
 
 # citation: https://stackoverflow.com/questions/26954122/how-can-i-pass-arguments-into-redirecturl-for-of-flask
 @app.route("/goal_display/<number>/<year>/<month>")
 @login_required
 def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, month = (datetime.now() - timedelta(hours=5)).month):
     connection = sqlite3.connect("tracker.db")
+    print(year)
+    print(month)
     db = connection.cursor()
     number = int(number)
-    year = int(year)
+    if type(year) != list:
+        year = int(year)
+    else:
+        year = int(year[0])
     month = int(month)
     goal_info = str(db.execute("SELECT * FROM users WHERE username = :u", {'u': session['user_id'][0]}).fetchall()[0])
     goal_name = goal_info.split(",")[number*5+3-5].strip().strip("'")
@@ -169,14 +183,80 @@ def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, mont
     connection.close()
     return render_template("numeric_month.html", month=month, year=year, years = years, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = session["user_id"][1:], number = number)
 
+@app.route("/goal_display_day/<number>/<year>/<month>/<day>", methods = ["GET", "POST"])
+@login_required
+def goal_display_day(number, year = (datetime.now() - timedelta(hours=5)).year, month = (datetime.now() - timedelta(hours=5)).month, day = (datetime.now() - timedelta(hours=5)).day):
+    connection = sqlite3.connect("tracker.db")
+    db = connection.cursor()
+    print(year)
+    print(month)
+    print(day)
+    # for some reason they think the month is "static" and the day is "mountain.jpg"??? 2019, static, and mountain.jpg
+    # citation: https://www.programiz.com/python-programming/datetime/strptime
+    day_of_week = datetime.strptime(month + "/" + day + "/" + year, '%m/%d/%Y').weekday()
+    # what do you get when you print?
+    # ok that's weird
+    number = int(number)
+    if type(year) != list:
+        year = int(year)
+    else:
+        year = int(year[0])
+    month = int(month)
+    day = int(day)
+    days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+    day_text = days[day_of_week] #gets header name
+    goal_info = str(db.execute("SELECT * FROM users WHERE username = :u", {'u': session['user_id'][0]}).fetchall()[0])
+    goal_name = goal_info.split(",")[number*5+3-5].strip().strip("'")
+    goal_type = goal_info.split(",")[number*5+4-5].strip().strip("'")
+
+    started = int(goal_info.split(",")[number*5].strip().strip("'"))
+    weekday_num, num_days = calendar.monthrange(year, month) # zero is monday
+    years = [i for i in range(started, year+1)]
+    data = ""
+    if goal_type == "binary":
+        x = db.execute("SELECT completed FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+            {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': day}).fetchall()
+        label = "Completed Today"
+        if not x:
+            data = "Not Logged"
+        elif x[0][0] == 1:
+            data = "Yes"
+        else:
+            data = "No"
+        connection.commit()
+        connection.close()
+        return render_template("binary_day.html", month=month, year=year, day = day, day_text = day_text, name = goal_name, label = label, data = data, goal_names = session["user_id"][1:], number = number, years = years)
+
+    else:
+
+        label = "Amount Achieved"
+        var = db.execute("SELECT * FROM numeric_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+                {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': day}).fetchall()
+        if len(var) == 0:
+            data = "Not Logged"
+        else:
+            comp = int(str(var[0]).split(",")[5].strip(" ").strip("'").strip(")"))
+            data = str(comp)
+        connection.commit()
+        connection.close()
+
+    return render_template("numeric_month.html", month=month, year=year, day = day, day_text = day_text, name = goal_name, label = label, data = data, goal_names = session["user_id"][1:], number = number, years = years)
+
+
 @app.route("/change_month/<number>", methods = ["POST"])
 @login_required
 def change_month(number):
     return redirect("/goal_display/" + str(number)+"/" + request.form.get("desired_year") + "/" + request.form.get("desired_month"))
 
+@app.route("/change_day/<number>", methods = ["POST"])
+@login_required
+def change_day(number):
+    "/goal_display_day/<number>/<year>/<month>/<day>"
+    return redirect("/goal_display_day/" + str(number)+"/" + request.form.get("desired_year") + "/" + request.form.get("desired_month") + "/" + request.form.get("desired_day"))
+
 @app.route("/enter_binary_data/<number>/<year>/<month>", methods=["POST"])
 @login_required
-def enter_binary_data(number, year = (datetime.now() - timedelta(hours=5)).year, month = datetime.now() - (timedelta(hours=5)).month):
+def enter_binary_data(number, year = (datetime.now() - timedelta(hours=5)).year, month = (datetime.now() - timedelta(hours=5)).month):
     number = int(number)
     year = int(year[0])
     month = int(month)
@@ -186,7 +266,7 @@ def enter_binary_data(number, year = (datetime.now() - timedelta(hours=5)).year,
     day = int(request.form.get("desired_day")) # gives int 1-31
     year = int(request.form.get("desired_year"))
     didIt = int(request.form.get("binary_tracker")) # will be Yes 1, or No 0
-    print(month, day, year, didIt)
+
     # if no answer
     if didIt == None or month == None or year == None:
         return apology("Must fill in all fields!")
@@ -197,12 +277,12 @@ def enter_binary_data(number, year = (datetime.now() - timedelta(hours=5)).year,
     if in_the_future(year, month, day):
         return apology("Can't enter data for the future.")
     date_check = str(db.execute("SELECT * FROM users WHERE username=:username", {'username': session['user_id'][0]}).fetchall()[0]).split(",")
-    print(date_check)
+    # print(date_check)
     year_check = int(date_check[number*5].strip().strip("'"))
     month_check = int(date_check[number*5+1].strip().strip("'"))
     day_check = int(date_check[number*5+2].strip().strip("'").strip(")"))
-    print(year_check, month_check, day_check)
-    print(year, month, day)
+    # print(year_check, month_check, day_check)
+    # print(year, month, day)
     inval = before_start(year, month, day, year_check, month_check, day_check)
     if inval:
         return apology("You started tracking this goal after this date.")
@@ -226,9 +306,9 @@ def enter_binary_data(number, year = (datetime.now() - timedelta(hours=5)).year,
 @login_required
 def enter_numeric_data(number, year = (datetime.now() - timedelta(hours=5)).year, month = (datetime.now() - timedelta(hours=5)).month):
     number = int(number)
-    print(year)
+
     year = int(year)
-    print(year)
+
     month = int(month)
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
