@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from flask import redirect, render_template, request, session
 from functools import wraps
 
-postgre = "postgres://fwqwwrtldorygc:4fdaacff36970c52281ab1028a3533d37c6ce75e149675a10881b382aef234e2@ec2-107-20-239-47.compute-1.amazonaws.com:5432/dfndjppmhgdfs7"
+postgre = "postgres://hcbgpzlypvdzfn:c3e84575d714ff83f269441d62e00aa6a7041c35b50c41c64d733dc64269276a@ec2-174-129-254-216.compute-1.amazonaws.com:5432/da4grjacno1b4i"
 goal_names = ["", "", ""]
 def apology(message, code=400):
     """Render message as an apology to user."""
