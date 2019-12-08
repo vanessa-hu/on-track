@@ -51,9 +51,13 @@ Mood Quote Generator: This generates a quote that is fitting for your mood
     After pressing submit, users will be redirected to a page where a corresponding quote will be displayed.
 
 ## FAQ
-    1. What errors did you run into?
+    1. What difficulties did you run into?
     When attempting to integrate with Heroku, we realized that real-world sqlite3 was not configured optimally for this purpose.
-    This was frustrating because we had meticulously split and stripped sqlite3 execute results using sqlite3 (see original logic in our commit history), but we ultimately had to convert back to cs50's SQL.
+    This was frustrating because we had meticulously split and stripped sqlite3 execute results using sqlite3 (see original logic in our commit history),
+    but we ultimately had to convert back to cs50's SQL.
+    Calendar.py
+
+    2. What are some of the biggest challenges you came across?
 
     2. Why only allow users to track three goals?
     We want users to be able to focus on a few goals and get into the habit of being consistent about them, instead of making the mistake of overestending themselves.
@@ -63,7 +67,7 @@ Mood Quote Generator: This generates a quote that is fitting for your mood
     We started working on giving users the ability to change the goals that they initially set, in case their goals change after that month is over.
     We would also create a summary section in the binary_month.html and numeric_month.html that displays how many days in the month the user has logged
     that they completed their goal or the average number obtained per days logged in the month.
-    We wanted to add a third type of habit
+    We wanted to add a third type of habit, a sliding scale, as well as a mood tracker.
 
 This documentation is to be a user’s manual for your project.
 Though the structure of your documentation is entirely up to you,
