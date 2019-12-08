@@ -37,14 +37,14 @@ Viewing Tracker (Monthly Calendar):
     The day display will have a panel at the left with the selected date (chosen in a month calendar page), whether the user logged the data,
     and if so, if it was Yes/No or a numerical amount.
 
-        [ Log Data ]
-        Users can also log data for the habit here. The same form as month calendar for logging data will appear.
+    [ Log Data ]
+    Users can also log data for the habit here. The same form as month calendar for logging data will appear.
 
-        [Return to Month View]
-        On the right top is a form to select a month and year, to return to the month view for that habit.
+    [Return to Month View]
+    On the right top is a form to select a month and year, to return to the month view for that habit.
 
-        [Change Day]
-        On the lower right is another form to select a month, day, year to show the day-view for that date.
+    [Change Day]
+    On the lower right is another form to select a month, day, year to show the day-view for that date.
 
 
 Mood Quote Generator: This generates a quote that is fitting for your mood
@@ -52,13 +52,16 @@ Mood Quote Generator: This generates a quote that is fitting for your mood
     After pressing submit, users will be redirected to a page where a corresponding quote will be displayed.
 
 ## FAQ
-    1. What difficulties did you run into?
-    When attempting to integrate with Heroku, we realized that real-world sqlite3 was not configured optimally for this purpose.
+    1. What are some difficulties you ran into?
+    - When attempting to integrate with Heroku, we realized that real-world sqlite3 was not configured optimally for this purpose.
     This was frustrating because we had meticulously split and stripped sqlite3 execute results using sqlite3 (see original logic in our commit history),
     but we ultimately had to convert back to cs50's SQL.
-    Calendar.py
-
-    2. What are some of the biggest challenges you came across?
+    - We also had trouble with the program differentiating calendar.py and python's calendar module so we decided to put all of calendar.py's functions into applications.py.
+    - We also struggled with the trickle down problems of allowing the user to choose a goal type (binary or numeric).
+    Figuring out how to route the nav bar tabs {{goal_1_name}}, {{goal_2_name}}, and {{goal_3_name}} to our binary_month.html or numeric_month.html based on the response of the user.
+    - It was difficult to generate a monthly calendar, so we eventually figured out the logic: by creating a table of 4-6 weeks,
+    making a list of the date numbers (e.g. 1-30), and pad the front and back of the list with empty spaces so the month would start and end on the accurate days of the week.
+    We used dateime and calendar to figure out time and also information about what day of the week a certain month starts in.
 
     2. Why only allow users to track three goals?
     We want users to be able to focus on a few goals and get into the habit of being consistent about them, instead of making the mistake of overestending themselves.
@@ -69,15 +72,6 @@ Mood Quote Generator: This generates a quote that is fitting for your mood
     We would also create a summary section in the binary_month.html and numeric_month.html that displays how many days in the month the user has logged
     that they completed their goal or the average number obtained per days logged in the month.
     We wanted to add a third type of habit, a sliding scale, as well as a mood tracker.
-
-This documentation is to be a user’s manual for your project.
-Though the structure of your documentation is entirely up to you,
-it should be incredibly clear to the staff how and where, if applicable,
-to compile, configure, and use your project. Your documentation should be
-at least several paragraphs in length. It should not be necessary for us
-to contact you with questions regarding your project after its submission.
-Hold our hand with this documentation; be sure to answer in your documentation
-any questions that you think we might have while testing your work.
 
 ## References
 (We have also included in-line references in our source code.)

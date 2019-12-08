@@ -34,6 +34,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# connect to database
 db = SQL("sqlite:///tracker.db")
 
 
@@ -51,14 +52,13 @@ def index():
     gn = []
     for i in range(1, 4):
         goal_info = db.execute("SELECT * FROM users WHERE username = :u", u=session['user_id'][0])[0]
-        print(goal_info)
-        print(type(goal_info))
-        goal_name = goal_info["goal_"+str(i)+"_name"]
-        goal_type = goal_info["goal_"+str(i)+"_type"]
+        goal_name = goal_info["goal_" + str(i) + "_name"]
+        goal_type = goal_info["goal_" + str(i) + "_type"]
         if not goal_name:
             gn.append("")
         else:
             gn.append(goal_name)
+        # label if goal_type is binary, checks completed field. 0 is no, 1 is yes
         if goal_type == "binary":
             x = db.execute("SELECT completed FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
                         username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=day)
@@ -72,14 +72,14 @@ def index():
                 text = "Completed Today?\n No"
                 images.append(logged_pic)
 
-        else:
+        else:  # label if goal_type is numeric
             var = db.execute("SELECT * FROM numeric_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
                             username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=day)
             if len(var) == 0:
                 text = "Num Achieved: Not Logged"
                 images.append(not_logged_pic)
             else:
-                comp = int(var[0]['amount'])
+                comp = int(var[0]['amount']) # checks amount field in var, stores in comp
                 text = "Num Achieved: " + str(comp)
                 images.append(logged_pic)
 
@@ -89,6 +89,7 @@ def index():
 # citation: https://stackoverflow.com/questions/26954122/how-can-i-pass-arguments-into-redirecturl-for-of-flask
 @app.route("/goal_display/<number>/<year>/<month>", methods = ["GET", "POST"])
 @login_required
+# default goal_display is current time, at est. takes in form input if posted
 def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, month = (datetime.now() - timedelta(hours=5)).month):
     if request.method == "POST":
         year = request.form.get("desired_year")
@@ -100,10 +101,10 @@ def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, mont
         year = int(year)
     month = int(month)
     goal_info = db.execute("SELECT * FROM users WHERE username = :u", u=session['user_id'][0])[0]
-    goal_name = goal_info["goal_"+str(number)+"_name"]
-    goal_type = goal_info["goal_"+str(number)+"_type"]
+    goal_name = goal_info["goal_" + str(number) + "_name"]
+    goal_type = goal_info["goal_" + str(number) + "_type"]
 
-    started = int(goal_info["goal_"+str(number)+"_year"])
+    started = int(goal_info["goal_" + str(number) + "_year"])
     weekday_num, num_days = calendar.monthrange(year, month)  # zero is monday
     num_weeks = 5
 
@@ -121,7 +122,7 @@ def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, mont
     # spaces before month starts up until 1st weekday, backpad is empty space as well
     front_pad = [" " for i in range(n)]
     back_pad = [" " for i in range(num_weeks*7 - len(front_pad) - num_days)]
-    dates = front_pad + [i for i in range(1, 1+num_days)] + back_pad
+    dates = front_pad + [i for i in range(1, 1 + num_days)] + back_pad
     data = []
     if goal_type == "binary":
         for i in range(len(dates)):
@@ -149,8 +150,8 @@ def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, mont
                     comp = int(var[0]['amount'])
                     data.append(comp)
     if goal_type == "binary":
-        years = [i for i in range(started, year+1)]
-        return render_template("binary_month.html", month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = session["user_id"][1:], number = number, years = years)
+        years = [i for i in range(started, year + 1)]
+        return render_template("binary_month.html", month=month, year=year, name=goal_name, data=data, dates=dates, num_weeks=num_weeks, goal_names=session["user_id"][1:], number=number, years=years)
     years = [i for i in range(started, year+1)]
     return render_template("numeric_month.html", month=month, year=year, years = years, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = session["user_id"][1:], number = number)
 
@@ -171,12 +172,12 @@ def goal_display_day(number):
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     day_text = days[day_of_week] #gets header name
     goal_info = db.execute("SELECT * FROM users WHERE username = :u", u=session['user_id'][0])[0]
-    goal_name = goal_info["goal_"+str(number)+"_name"]
-    goal_type = goal_info["goal_"+str(number)+"_type"]
+    goal_name = goal_info["goal_" + str(number) + "_name"]
+    goal_type = goal_info["goal_" + str(number) + "_type"]
 
-    started = goal_info["goal_"+str(number)+"_year"]
+    started = goal_info["goal_" + str(number) + "_year"]
     weekday_num, num_days = calendar.monthrange(year, month)  # zero is monday
-    years = [i for i in range(started, year+1)]
+    years = [i for i in range(started, year + 1)]
     data = ""
     pics = ["https://images.unsplash.com/photo-1564510714747-69c3bc1fab41?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80",
     "https://images.unsplash.com/photo-1524678714210-9917a6c619c2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=600&q=60", "https://images.unsplash.com/photo-1473181488821-2d23949a045a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80"]
@@ -227,10 +228,10 @@ def enter_binary_data(number, year, month):
     date_check = db.execute("SELECT * FROM users WHERE username=:username",
                                 username=session['user_id'][0])[0]
     # print(date_check)
-    year_check = int(date_check['goal_'+str(number)+'_year'])
-    month_check = int(date_check['goal_'+str(number)+'_month'])
-    day_check = int(date_check['goal_'+str(number)+'_day'])
-    gn = date_check['goal_'+str(number)+'_name']
+    year_check = int(date_check['goal_' + str(number) + '_year'])
+    month_check = int(date_check['goal_' + str(number) + '_month'])
+    day_check = int(date_check['goal_' + str(number) + '_day'])
+    gn = date_check['goal_' + str(number) + '_name']
     # print(year_check, month_check, day_check)
     # print(year, month, day)
     inval = before_start(year, month, day, year_check, month_check, day_check)
@@ -246,11 +247,11 @@ def enter_binary_data(number, year, month):
         db.execute("UPDATE binary_goals SET completed = :c WHERE user = :u AND goal_name = :g AND year = :year AND month = :month AND day = :day",
                    c=didIt, u=session['user_id'][0], g=gn, year=year, month=month, day=day)
     if int(number) == 1:
-        return redirect("/goal_display/1/"+str(year)+"/"+str(month))
+        return redirect("/goal_display/1/" + str(year) + "/" + str(month))
     if int(number) == 2:
-        return redirect("/goal_display/2/"+str(year)+"/"+str(month))
+        return redirect("/goal_display/2/" + str(year) + "/" + str(month))
     else:
-        return redirect("/goal_display/3/"+str(year)+"/"+str(month))
+        return redirect("/goal_display/3/" + str(year) + "/" + str(month))
 
 
 @app.route("/enter_numeric_data/<number>/<year>/<month>", methods=["POST"])
@@ -274,10 +275,10 @@ def enter_numeric_data(number, year, month):
     date_check = db.execute("SELECT * FROM users WHERE username=:username",
                                 username=session['user_id'][0])[0]
     # print(date_check)
-    year_check = int(date_check['goal_'+str(number)+'_year'])
-    month_check = int(date_check['goal_'+str(number)+'_month'])
-    day_check = int(date_check['goal_'+str(number)+'_day'])
-    gn = date_check['goal_'+str(number)+'_name']
+    year_check = int(date_check['goal_' + str(number) + '_year'])
+    month_check = int(date_check['goal_' + str(number) + '_month'])
+    day_check = int(date_check['goal_' + str(number) + '_day'])
+    gn = date_check['goal_'+str(number) + '_name']
     inval = before_start(year, month, day, year_check, month_check, day_check)
     if inval:
         return apology("You started tracking this goal after this date.")
@@ -291,11 +292,11 @@ def enter_numeric_data(number, year, month):
         db.execute("UPDATE numeric_goals SET amount = :c WHERE user = :u AND goal_name = :g AND year = :year AND month = :month AND day = :day",
                    c=value, u=session['user_id'][0], g=gn, year=year, month=month, day=day)
     if int(number) == 1:
-        return redirect("/goal_display/1/"+str(year)+"/"+str(month))
+        return redirect("/goal_display/1/" + str(year) + "/" + str(month))
     if int(number) == 2:
-        return redirect("/goal_display/2/"+str(year)+"/"+str(month))
+        return redirect("/goal_display/2/" + str(year) + "/" + str(month))
     else:
-        return redirect("/goal_display/3/"+str(year)+"/"+str(month))
+        return redirect("/goal_display/3/" + str(year) + "/" + str(month))
 
 
 @app.route("/login", methods=["GET", "POST"])

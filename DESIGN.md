@@ -95,4 +95,6 @@ We modified CS50 Finance's apology function by passing in parameters for year, m
 This is because layout.html requires these parameters on its navigation bar (it needs to display the goal names so the user can view their data).
 
 ## Some Comments on Design Choices
-We decided to use one goal_display function
+We decided to use one goal_display function that passed in the number, year, and month parameters, which saved us a lot of copying compared to if we had had separate display functions for goals 1, 2, and 3.
+We also chose to split up the tables as we did so that we had just enough differentiation between binary and numeric goals while not having to repeat things like the user's password or unnecessarily split up different goals.
+We chose this design over having separate tables for goal 1, goal 2, and goal 3 because these numberings are arbitrary, and the goal type is more important.
