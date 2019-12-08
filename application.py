@@ -34,9 +34,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-db = SQL(get_postgre())
-# db = SQL(os.environ.get("DATABASE_URL")
-# or "sqlite:///tracker.db")
+db = SQL("sqlite:///tracker.db")
 
 
 @app.route("/")
