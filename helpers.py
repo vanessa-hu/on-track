@@ -18,7 +18,11 @@ def apology(message, code=400):
                          ("%", "~p"), ("#", "~h"), ("/", "~s"), ("\"", "''")]:
             s = s.replace(old, new)
         return s
-    return render_template("apology.html", top=code, bottom=escape(message), goal_names = session["user_id"][1:], year = int((datetime.now() - timedelta(hours=5)).year), month = int((datetime.now() - timedelta(hours=5)).month)), code
+    try:
+        gn = session["user_id"][1:]
+    except:
+        gn = ["", "", ""]
+    return render_template("apology.html", top=code, bottom=escape(message), goal_names = gn, year = int((datetime.now() - timedelta(hours=5)).year), month = int((datetime.now() - timedelta(hours=5)).month)), code
 
 
 def login_required(f):

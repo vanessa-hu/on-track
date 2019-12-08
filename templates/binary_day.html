@@ -81,45 +81,34 @@
     </form>
 
 <body>
-<h3>Viewing {{ month }}/{{ day }}/{{ year }}</h3>
-<h3>{{ day_text }}</h3>
-<h4>{{ label }}</h4>
-<p>{{ data }}</p>
 
 
+<div class="container padding">
+        <div class="row">
+          <div class="col-sm-6">
 <div class="card dayview">
-  <img class="card-img-top" src="..." alt="Card image cap">
+  <img class="card-img-top" src="{{ pic }}">
   <div class="card-img-overlay">
-    <h5 class="card-title">Viewing {{ month }}/{{ day }}/{{ year }}</h5>
+    <h2 class="card-title">Viewing {{ month }}/{{ day }}/{{ year }}</h2>
   </div>
   <div class="card-body">
-    <h5 class="card-title">Card title</h5>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
-  </div>
-</div>
-
-<div class="card bg-dark text-white">
-  <img class="card-img" src="..." alt="Card image">
-  <div class="card-img-overlay">
-    <h5 class="card-title">Card title</h5>
-    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-    <p class="card-text">Last updated 3 mins ago</p>
-  </div>
-</div>
-
-
-<p>Click here for monthview!</p>
+      <br>
+      <br>
+    <h3 class="card-title">{{ label }}</h3>
+    <p class="card-text">{{ data }}</p>
+    <!--<a href="#" class="btn btn-primary">Go somewhere</a> -->
     <form action="/goal_display/{{ number }}/{{ year }}/{{ month }}" method="post">
           <button class="btn btn-info" type="submit">Month View!</button>
     </form>
+  </div>
+</div>
+            </div>
 
-
-
-
-<form action="/change_day/{{ number }}" method="post">
+<div class = "col-sm-6">
+<form action="/goal_display_day/{{ number }}" method="post" class = "padding">
+        <div class = "padding">
         <p>Want to view data for a different day? Enter your desired day here!</p>
-
+        </div>
         <select name="desired_month">
 
                     <option value= "1">January</option>
@@ -183,6 +172,9 @@
 			  <button class="btn btn-primary" type="submit">View Data For This Day!</button>
 
     </form>
+    </div>
+    </div>
+    </div>
 
 
 </body>

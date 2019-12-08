@@ -24,7 +24,7 @@
 
     </head>
 
-    <body style="background-image: url('../static/mountain.jpg'); background-size: cover;">
+    <body>
 
         <nav class="navbar navbar-expand-md navbar-light bg-light border">
             <a class="navbar-brand" href="/"><span class="yellow">O</span><span class="green">n</span> <span class="red">Track</span></a>
@@ -33,7 +33,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbar">
                 {% if session.user_id %}
-                    {% if goal_names[0] == "None" %}
+                    {% if goal_names[0] == "" or goal_names[0] == "None"  %}
                     <ul class="navbar-nav mr-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/set_goals">Set Goals</a></li>
                     </ul>

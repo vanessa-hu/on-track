@@ -79,20 +79,31 @@
     </form>
 
 <body>
-<h3>Viewing {{ month }} / {{ day }} / {{ year }}</h3>
-<h3>{{ day_text }}</h3>
-<h4>{{ label }}</h4>
-<p>{{ data }}</p>
 
-<p>Click here for monthview!</p>
+<div class="container padding">
+        <div class="row">
+          <div class="col-sm-6">
+<div class="card dayview">
+  <img class="card-img-top" src="{{ pic }}">
+  <div class="card-img-overlay">
+    <h2 class="card-title">Viewing {{ month }}/{{ day }}/{{ year }}</h2>
+  </div>
+  <div class="card-body">
+    <h3 class="card-title">{{ label }}</h3>
+    <p class="card-text">{{ data }}</p>
+    <!--<a href="#" class="btn btn-primary">Go somewhere</a> -->
     <form action="/goal_display/{{ number }}/{{ year }}/{{ month }}" method="post">
           <button class="btn btn-info" type="submit">Month View!</button>
     </form>
+  </div>
+</div>
+
+    </div>
 
 
 
-
-<form action="/change_day/{{ number }}" method="post">
+<div class = "col-sm-6">
+<form action="/goal_display_day/{{ number }}" method="post" class = "padding">
         <p>Want to view data for a different day? Enter your desired day here!</p>
 
         <select name="desired_month">
@@ -158,6 +169,7 @@
 			  <button class="btn btn-primary" type="submit">View Data For This Day!</button>
 
     </form>
+    </div>
 
 
 </body>
