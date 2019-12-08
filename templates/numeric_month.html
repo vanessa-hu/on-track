@@ -6,7 +6,9 @@
 
 {% block main %}
     <h2>{{ name }}</h2><br>
-    <p>How on top of your goal have you been?</p>
+    <div class = "padding">
+    <h3>How on top of your goal have you been?</h3>
+    </div>
     <form action="/enter_numeric_data/{{ number }}/{{ year }}/{{ month }}" method="post">
         <p>Enter data for today or for any past date since you started tracking this goal.</p>
         <select name="desired_month">
@@ -280,6 +282,7 @@
     </form>
   <br>
   <br>
+  <br>
     <p>Want a view of a specific day instead? Input your desired day below!</p>
     <form action="/goal_display_day/{{ number }}" method="post">
         <p></p>
@@ -341,7 +344,7 @@
                     {% endfor %}
 
             </select>
-          <button class="btn btn-primary" type="submit">Day View!</button>
+          <button class="btn btn-info" type="submit">Day View!</button>
     </form>
 </body>
 </html>

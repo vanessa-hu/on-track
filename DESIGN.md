@@ -28,8 +28,15 @@ Similarly, the links route to /goal_display/(1, 2, or 3)/{{ year }}/{{ month }},
 However, when the user clicks on the goal tabs, the user is taken to either the binary_month.html or numeric_month.html based on the the type of goal (numeric or binary) the user has determined this particular goal will be.
 The fourth link in our nav-bar is our Mood Quote Generator, described below.
 ## bootstrap features
-We added many bootstrap alerts: on the login.html to remind the user to register before having the credentials to login, on the homepage aka index.html to remind the user to log their goals, and
-We also added a card in binary_day.html and numeric_day.html and useOther features include a bootstrap carousel
+Bootstrap alerts:
+on the login.html to remind the user to register before having the credentials to login, on the homepage aka index.html to remind the user to log their goals, and
+
+Bootstrap cards:
+We placed one card in binary\_day.html and numeric\_day.html and used the class="card-img-overlay" to display the date that the user chose to view in day view over it.
+We also have the card's caption display the data inserted for that particular day
+
+Bootstrap carousel:
+Our carousel, located in index.html, displays 3 images for whether or not each of the 3 goals have been logged and this is explained in the index section below.
 
 ## Set Goals
 set_goals_html appears right after registering, where the user sets the name and type (binary or numeric) of each of the three habits.
@@ -45,21 +52,37 @@ It does this in Python index() by iterating through range(1, 4) for habits 1-3 a
 Similarly, it'll display 1 of 2 images based on whether the user logged data for that day, passing a list of length 3 of image links into render_template to display in the carousel on index.html.
 
 ## Goal Display (Month)
-
-## Goal Display (Day)
+In binary_month.html, we created an empty 7x4 (for a month that spans 4 week), 7x5(for a month that spans 5 week), and 7x6 (for a month that spans 6 week) html table and used html if statements to choose which to display.
+Then we passed in the dates and the data using an if statement in application.py and added padding for the days before the first of that month in the table.
+### Timezone Adjustment
+We use Python's datetime module to calculate the current date and time for various functions. However, datetime calculates times in UTC, which is 5 hours ahead of EST.
+To adjust for this, we use the timedelta module and subtract timedelta(hours=5) to get the current UTC date and time minus five hours. Hence, by default, our app works in EST.
 
 
 ## Enter Data
+    Users can log data for a habit both from day and month-view, binary or numeric html pages.
+    Each of these pages has a form that takes in desired month, year, day. Binary pages take Yes/No in a dropdown; numeric pages take numeric input.
     We created two different routes in which our users could enter their data based on the type of goal that they wanted to track: binary or numerical.
-    For enter_binary_data/<number>/<year>/<month>:
+
+    For enter\_binary\_data/<number>/<year>/<month>:
         A binary goal is one that you can track by solely saying yes (as in I completed it) or no (I have not completed it).
-        We make a form to submit to binary within the binary_day.html and binary_month html files.
+        We make a form to submit to binary within the binary\_day.html and binary\_month html files.
+
 
     For enter_numeric_data/<number>/<year>/<month>:
     A numeric goal is one that you can track by inputting a number. Examples include sleep trackers in which a users inputs the number of hours they get that night or fluid tracker in which a user inputs the number of cups a user has drunk.
     The numeric goal form is within the numeric_day.html file.
 
-## Change Month
+## Goal Display (Day)
+The app route "goal_display_day/<number>" can be accessed from any habit's month-display page.
+We have a form that collects desired year, month, and day to stored, and we use .strptime to convert these strings to a date object
+to use .weekday() to get the weekday.
+There's a list of possible pic backgrounds that we randomly choose using random.choice().
+We access the binary_goals or numeric_goals table based on the goal_type, and store the answer into data.
+We thus either render binary_day or numeric_day.html.
+    Both pages have a Bootstrap card on the side with an image, the data overlay on top, and the logged info.
+    The left side has a form to switch to month view (/goal_display route) or to log info.
+
 
 ## Mood Quote Generator
     The mood quote generator requires the user to input their mood using radio buttons through a form in quotes.html.
@@ -67,7 +90,11 @@ Similarly, it'll display 1 of 2 images based on whether the user logged data for
     We hard coded lists of three quotes for each mood and implemented the built in python function random so the user has the ability to get different quotes when they use the mood quotes generator tab again and are feeling the same mood.
     The user will then be redirected to the quotes1.html where the quote that the quotesCalculator returns is displayed.
 
+## Apology
+We modified CS50 Finance's apology function by passing in parameters for year, month, and goal_names.
+This is because layout.html requires these parameters on its navigation bar (it needs to display the goal names so the user can view their data).
 
+## Some Comments on Design Choices
 A “design document” for your project in the form of a Markdown file called DESIGN.md
 that discusses, technically, how you implemented your project and why you made the design
 decisions you did. Your design document should be at least several paragraphs in length.

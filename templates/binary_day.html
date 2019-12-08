@@ -105,7 +105,7 @@
             </div>
 
 <div class = "col-sm-5">
-  <form action="/goal_display/{{ number }}/{{ year }}/{{ month }}" method="post">
+  <form action="/goal_display/{{ number }}/{{ year }}/{{ month }}" method="post" class = "padding">
         <p>Want to switch back to month view instead? Enter your desired year and month below!</p>
         <select name="desired_month">
 
@@ -129,10 +129,10 @@
                     {% endfor %}
 
         </select>
+        <br><br>
          <button class="btn btn-primary" type="submit">Month View!</button>
     </form>
-<br>
-<br>
+
 <form action="/goal_display_day/{{ number }}" method="post" class = "padding">
         <div class = "padding">
         <p>Want to view data for a different day? Enter your desired day here!</p>
@@ -196,9 +196,8 @@
                     {% endfor %}
 
             </select>
-            <br>
-            <br>
-            <br>
+            <br><br>
+
 			  <button class="btn btn-primary" type="submit">View Data For This Day!</button>
 
     </form>

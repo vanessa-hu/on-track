@@ -6,7 +6,7 @@
 
 {% block main %}
     <h2>{{ name }}</h2><br>
-    <p class = "padding">How on top of your goal have you been?</p>
+    <h3 class = "padding">How on top of your goal have you been?</h3>
     <form action="/enter_binary_data/{{ number }}/{{ year }}/{{ month }}" method="post">
         <p>Enter data for today or for any past date since you started tracking this goal.</p>
         <br>
@@ -261,6 +261,7 @@
 <br>
 <form action="/goal_display/{{ number }}/{{ year }}/{{ month }}" method="post">
         <p>Want to view data for a different month? Enter your desired month here!</p>
+        <br>
         <select name="desired_month">
 
                     <option value= "1">January</option>
@@ -288,10 +289,10 @@
 
     </form>
 
-<p>You have fulfilled your goal {{ goal_fulfilled }} days this month.</p>
 
+<br><br><br>
 <p>Want a view of a specific day instead? Input your desired day below!</p>
-
+<br>
 <form action="/goal_display_day/{{ number }}" method="post">
         <p></p>
         <select name="desired_month">
