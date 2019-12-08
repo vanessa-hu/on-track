@@ -55,9 +55,9 @@ def index():
     year = int(now.year)
     month = int(now.month)
     day = int(now.day)
-    print(year)
-    print(month)
-    print(day)
+    #print(year)
+    #print(month)
+    #print(day)
 
 
     info = []
@@ -110,8 +110,8 @@ def index():
 @login_required
 def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, month = (datetime.now() - timedelta(hours=5)).month):
     connection = sqlite3.connect("tracker.db")
-    print(year)
-    print(month)
+    print(type(year))
+    print(type(month))
     db = connection.cursor()
     number = int(number)
     if type(year) == list:
@@ -171,7 +171,7 @@ def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, mont
             {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
         goal_fulfilled=len(x)
         years = [i for i in range(started, year+1)]
-        print(years)
+        print(type(years))
         connection.commit()
         connection.close()
         return render_template("binary_month.html", goals_fulfilled=goal_fulfilled, month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = session["user_id"][1:], number = number, years = years)
@@ -325,11 +325,11 @@ def enter_numeric_data(number, year = (datetime.now() - timedelta(hours=5)).year
     if in_the_future(year, month, day):
         return apology("Can't enter data for the future.")
     date_check = str(db.execute("SELECT * FROM users WHERE username=:username", {'username': session['user_id'][0]}).fetchall()[0]).split(",")
-    print(date_check)
+    #print(date_check)
     year_check = int(date_check[number*5].strip().strip("'"))
     month_check = int(date_check[number*5+1].strip().strip("'"))
     day_check = int(date_check[number*5+2].strip().strip("'").strip(")"))
-    print(year_check, month_check, day_check)
+    #print(year_check, month_check, day_check)
     inval = before_start(year, month, day, year_check, month_check, day_check)
     if inval:
         return apology("You started tracking this goal after this date.")
