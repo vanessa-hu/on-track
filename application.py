@@ -29,7 +29,7 @@ def after_request(response):
 
 
 # Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_FILE_DIR"] = mkdtemp()
+# app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
@@ -396,6 +396,7 @@ def register():
 @login_required
 def set_goals():
     """Set a user's goals after they register"""
+    print(session["user_id"])
     if request.method == "GET":
         return render_template("set_goals.html", goal_names=session["user_id"][1:])
     goal_1_name = request.form.get("goal_1_name")
