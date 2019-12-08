@@ -1,6 +1,6 @@
 import os
 
-import sqlite3
+from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
 from tempfile import mkdtemp
@@ -34,6 +34,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+db = SQL("sqlite:///tracker.db")
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
@@ -43,11 +44,6 @@ if not os.environ.get("API_KEY"):
 @app.route("/")
 @login_required
 def index():
-    connection = sqlite3.connect("tracker.db")
-    db = connection.cursor()
-    connection.commit()
-    connection.close()
-
     now = datetime.now() - timedelta(hours=5)
     year = int(now.year)
     month = int(now.month)
@@ -56,22 +52,24 @@ def index():
     images = [] # 3 pic sources for either logged or not logged
     logged_pic = "https://images.unsplash.com/photo-1456071950267-1b8deae9e997?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2300&q=80"
     not_logged_pic = "https://images.unsplash.com/photo-1486895756674-b48b9b2eacf3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80"
-
+    gn = []
     for i in range(1, 4):
-        connection = sqlite3.connect("tracker.db")
-        db = connection.cursor()
-        goal_info = str(db.execute("SELECT * FROM users WHERE username = :u", {'u': session['user_id'][0]}).fetchall()[0])
-        goal_name = goal_info.split(",")[i*5+3-5].strip().strip("'")
-        goal_type = goal_info.split(",")[i*5+4-5].strip().strip("'")
-
+        goal_info = db.execute("SELECT * FROM users WHERE username = :u", u=session['user_id'][0])[0]
+        print(goal_info)
+        print(type(goal_info))
+        goal_name = goal_info["goal_"+str(i)+"_name"]
+        goal_type = goal_info["goal_"+str(i)+"_type"]
+        if not goal_name:
+            gn.append("")
+        else:
+            gn.append(goal_name)
         if goal_type == "binary":
             x = db.execute("SELECT completed FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
-                        {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': day}).fetchall()
-
-            if not x:
+                        username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=day)
+            if len(x) == 0:
                 text = "Completed Today?\n Not Logged"
                 images.append(not_logged_pic)
-            elif x[0][0] == 1:
+            elif int(x[0]['completed']) == 1:
                 text = "Completed Today?\n Yes"
                 images.append(logged_pic)
             else:
@@ -80,42 +78,36 @@ def index():
 
         else:
             var = db.execute("SELECT * FROM numeric_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
-                            {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': day}).fetchall()
+                            username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=day)
             if len(var) == 0:
                 text = "Num Achieved: Not Logged"
                 images.append(not_logged_pic)
             else:
-                comp = int(str(var[0]).split(",")[5].strip(" ").strip("'").strip(")"))
+                comp = int(var[0]['amount'])
                 text = "Num Achieved: " + str(comp)
                 images.append(logged_pic)
 
         info.append(text)
-
-    connection.commit()
-    connection.close()
-    print(session["user_id"][1:])
-    return render_template("index.html", goal_names=session["user_id"][1:], year=year, month=month, info=info, images = images)
+    return render_template("index.html", goal_names=gn, year=year, month=month, info=info, images = images)
 
 # citation: https://stackoverflow.com/questions/26954122/how-can-i-pass-arguments-into-redirecturl-for-of-flask
 @app.route("/goal_display/<number>/<year>/<month>", methods = ["GET", "POST"])
 @login_required
 def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, month = (datetime.now() - timedelta(hours=5)).month):
-    connection = sqlite3.connect("tracker.db")
     if request.method == "POST":
         year = request.form.get("desired_year")
         month = request.form.get("desired_month")
-    db = connection.cursor()
     number = int(number)
     if type(year) == list:
         year = int(year[0])
     else:
         year = int(year)
     month = int(month)
-    goal_info = str(db.execute("SELECT * FROM users WHERE username = :u", {'u': session['user_id'][0]}).fetchall()[0])
-    goal_name = goal_info.split(",")[number*5+3-5].strip().strip("'")
-    goal_type = goal_info.split(",")[number*5+4-5].strip().strip("'")
+    goal_info = db.execute("SELECT * FROM users WHERE username = :u", u=session['user_id'][0])[0]
+    goal_name = goal_info["goal_"+str(number)+"_name"]
+    goal_type = goal_info["goal_"+str(number)+"_type"]
 
-    started = int(goal_info.split(",")[number*5].strip().strip("'"))
+    started = int(goal_info["goal_"+str(number)+"_year"])
     weekday_num, num_days = calendar.monthrange(year, month)  # zero is monday
     num_weeks = 5
 
@@ -141,11 +133,11 @@ def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, mont
                 data.append(2)
             else:
                 var = db.execute("SELECT * FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
-                {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
+                username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=dates[i])
                 if len(var) == 0:
                     data.append(2)
                 else:
-                    comp = int(str(var[0]).split(",")[5].strip(" ").strip("'").strip(")"))
+                    comp = int(var[0]['completed'])
                     data.append(comp)
     else:
         for i in range(len(dates)):
@@ -154,34 +146,21 @@ def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, mont
             else:
 
                 var = db.execute("SELECT * FROM numeric_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
-                {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
+                username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=dates[i])
                 if len(var) == 0:
                     data.append("--")
                 else:
-                    comp = int(str(var[0]).split(",")[5].strip(" ").strip("'").strip(")"))
+                    comp = int(var[0]['amount'])
                     data.append(comp)
     if goal_type == "binary":
-        x = db.execute("SELECT completed FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
-            {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
-        goal_fulfilled=len(x)
         years = [i for i in range(started, year+1)]
-        connection.commit()
-        connection.close()
-        return render_template("binary_month.html", goals_fulfilled=goal_fulfilled, month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = session["user_id"][1:], number = number, years = years)
-
-    x = db.execute("SELECT amount FROM numeric_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
-        {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': dates[i]}).fetchall()
-    goal_fulfilled=len(x)
+        return render_template("binary_month.html", month=month, year=year, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = session["user_id"][1:], number = number, years = years)
     years = [i for i in range(started, year+1)]
-    connection.commit()
-    connection.close()
     return render_template("numeric_month.html", month=month, year=year, years = years, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = session["user_id"][1:], number = number)
 
 @app.route("/goal_display_day/<number>", methods = ["POST"])
 @login_required
 def goal_display_day(number):
-    connection = sqlite3.connect("tracker.db")
-    db = connection.cursor()
     year = request.form.get("desired_year")
     month = request.form.get("desired_month")
     day = request.form.get("desired_day")
@@ -195,11 +174,11 @@ def goal_display_day(number):
     day = int(day)
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     day_text = days[day_of_week] #gets header name
-    goal_info = str(db.execute("SELECT * FROM users WHERE username = :u", {'u': session['user_id'][0]}).fetchall()[0])
-    goal_name = goal_info.split(",")[number*5+3-5].strip().strip("'")
-    goal_type = goal_info.split(",")[number*5+4-5].strip().strip("'")
+    goal_info = db.execute("SELECT * FROM users WHERE username = :u", u=session['user_id'][0])[0]
+    goal_name = goal_info["goal_"+str(number)+"_name"]
+    goal_type = goal_info["goal_"+str(number)+"_type"]
 
-    started = int(goal_info.split(",")[number*5].strip().strip("'"))
+    started = goal_info["goal_"+str(number)+"_year"]
     weekday_num, num_days = calendar.monthrange(year, month)  # zero is monday
     years = [i for i in range(started, year+1)]
     data = ""
@@ -208,41 +187,33 @@ def goal_display_day(number):
     pic = random.choice(pics)
     if goal_type == "binary":
         x = db.execute("SELECT completed FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
-                     {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': day}).fetchall()
+                     username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=day)
         label = "Completed Today?"
-        if not x:
+        if len(x) == 0:
             data = "Not Logged"
-        elif x[0][0] == 1:
+        elif int(x[0]['completed']) == 1:
             data = "Yes"
         else:
             data = "No"
-        connection.commit()
-        connection.close()
         return render_template("binary_day.html", month=month, year=year, day=day, day_text=day_text, name=goal_name, label=label, data=data, goal_names=session["user_id"][1:], number=number, years=years, pic = pic)
 
     else:
 
         label = "Amount Achieved"
         var = db.execute("SELECT * FROM numeric_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
-                        {'username': session['user_id'][0], 'goal_name': goal_name, 'year': year, 'month': month, 'day': day}).fetchall()
+                        username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=day)
         if len(var) == 0:
             data = "Not Logged"
         else:
-            comp = int(str(var[0]).split(",")[5].strip(" ").strip("'").strip(")"))
+            comp = int(var[0]['amount'])
             data = str(comp)
-        connection.commit()
-        connection.close()
 
     return render_template("numeric_day.html", month=month, year=year, day=day, day_text=day_text, name=goal_name, label=label, data=data, goal_names=session["user_id"][1:], number=number, years=years, pic = pic)
 
 @app.route("/enter_binary_data/<number>/<year>/<month>", methods=["POST"])
 @login_required
-def enter_binary_data(number, year=(datetime.now() - timedelta(hours=5)).year, month=(datetime.now() - timedelta(hours=5)).month):
+def enter_binary_data(number, year, month):
     number = int(number)
-    year = int(year[0])
-    month = int(month)
-    connection = sqlite3.connect("tracker.db")
-    db = connection.cursor()
     month = int(request.form.get("desired_month"))  # gives int 1-12
     day = int(request.form.get("desired_day"))  # gives int 1-31
     year = int(request.form.get("desired_year"))
@@ -257,28 +228,27 @@ def enter_binary_data(number, year=(datetime.now() - timedelta(hours=5)).year, m
         return apology("Invalid day for this month.")
     if in_the_future(year, month, day):
         return apology("Can't enter data for the future.")
-    date_check = str(db.execute("SELECT * FROM users WHERE username=:username",
-                                {'username': session['user_id'][0]}).fetchall()[0]).split(",")
+    date_check = db.execute("SELECT * FROM users WHERE username=:username",
+                                username=session['user_id'][0])[0]
     # print(date_check)
-    year_check = int(date_check[number*5].strip().strip("'"))
-    month_check = int(date_check[number*5+1].strip().strip("'"))
-    day_check = int(date_check[number*5+2].strip().strip("'").strip(")"))
+    year_check = int(date_check['goal_'+str(number)+'_year'])
+    month_check = int(date_check['goal_'+str(number)+'_month'])
+    day_check = int(date_check['goal_'+str(number)+'_day'])
+    gn = date_check['goal_'+str(number)+'_name']
     # print(year_check, month_check, day_check)
     # print(year, month, day)
     inval = before_start(year, month, day, year_check, month_check, day_check)
     if inval:
         return apology("You started tracking this goal after this date.")
     # get date info
-    exists = db.execute("SELECT user, year, month, day FROM binary_goals WHERE user = :u AND year = :y AND month = :m AND day = :d",
-                       {'u': session['user_id'][0], 'y': year, 'm': month, 'd': day})
-    if len(exists.fetchall()) == 0:
+    exists = db.execute("SELECT user, goal_name, year, month, day FROM binary_goals WHERE user = :u AND goal_name = :gn AND year = :y AND month = :m AND day = :d",
+                       u=session['user_id'][0], gn=gn, y=year, m=month, d=day)
+    if len(exists) == 0:
         db.execute("INSERT INTO binary_goals (user, goal_name, year, month, day, completed) VALUES (:u, :g, :y, :m, :d, :c)",
-                    {'u': session['user_id'][0], 'g': session["user_id"][number], 'y': year, 'm': month, 'd': day, 'c': didIt})
+                    u=session['user_id'][0], g=gn, y=year, m=month, d=day, c=didIt)
     else:
         db.execute("UPDATE binary_goals SET completed = :c WHERE user = :u AND goal_name = :g AND year = :year AND month = :month AND day = :day",
-                   {'c': didIt, 'u': session['user_id'][0], 'g': session["user_id"][number], 'year': year, 'month': month, 'day': day})
-    connection.commit()
-    connection.close()
+                   c=didIt, u=session['user_id'][0], g=gn, year=year, month=month, day=day)
     if int(number) == 1:
         return redirect("/goal_display/1/"+str(year)+"/"+str(month))
     if int(number) == 2:
@@ -289,14 +259,8 @@ def enter_binary_data(number, year=(datetime.now() - timedelta(hours=5)).year, m
 
 @app.route("/enter_numeric_data/<number>/<year>/<month>", methods=["POST"])
 @login_required
-def enter_numeric_data(number, year=(datetime.now() - timedelta(hours=5)).year, month=(datetime.now() - timedelta(hours=5)).month):
+def enter_numeric_data(number, year, month):
     number = int(number)
-
-    year = int(year)
-
-    month = int(month)
-    connection = sqlite3.connect("tracker.db")
-    db = connection.cursor()
     month = int(request.form.get("desired_month"))  # gives int 1-12
     day = int(request.form.get("desired_day"))  # gives int 1-31
     year = int(request.form.get("desired_year"))
@@ -311,27 +275,25 @@ def enter_numeric_data(number, year=(datetime.now() - timedelta(hours=5)).year, 
         return apology("Invalid day for this month.")
     if in_the_future(year, month, day):
         return apology("Can't enter data for the future.")
-    date_check = str(db.execute("SELECT * FROM users WHERE username=:username",
-                                {'username': session['user_id'][0]}).fetchall()[0]).split(",")
+    date_check = db.execute("SELECT * FROM users WHERE username=:username",
+                                username=session['user_id'][0])[0]
     # print(date_check)
-    year_check = int(date_check[number*5].strip().strip("'"))
-    month_check = int(date_check[number*5+1].strip().strip("'"))
-    day_check = int(date_check[number*5+2].strip().strip("'").strip(")"))
-    # print(year_check, month_check, day_check)
+    year_check = int(date_check['goal_'+str(number)+'_year'])
+    month_check = int(date_check['goal_'+str(number)+'_month'])
+    day_check = int(date_check['goal_'+str(number)+'_day'])
+    gn = date_check['goal_'+str(number)+'_name']
     inval = before_start(year, month, day, year_check, month_check, day_check)
     if inval:
         return apology("You started tracking this goal after this date.")
     # get date info
-    exists = db.execute("SELECT user, year, month, day FROM numeric_goals WHERE user = :u AND year = :y AND month = :m AND day = :d",
-                        {'u': session['user_id'][0], 'y': year, 'm': month, 'd': day})
-    if len(exists.fetchall()) == 0:
+    exists = db.execute("SELECT user, goal_name, year, month, day FROM numeric_goals WHERE user = :u AND goal_name = :gn AND year = :y AND month = :m AND day = :d",
+                        u=session['user_id'][0], gn=gn, y=year, m=month, d=day)
+    if len(exists) == 0:
         db.execute("INSERT INTO numeric_goals (user, goal_name, year, month, day, amount) VALUES (:u, :g, :y, :m, :d, :c)",
-                   {'u': session['user_id'][0], 'g': session["user_id"][number], 'y': year, 'm': month, 'd': day, 'c': value})
+                   u=session['user_id'][0], g=gn, y=year, m=month, d=day, c=value)
     else:
         db.execute("UPDATE numeric_goals SET amount = :c WHERE user = :u AND goal_name = :g AND year = :year AND month = :month AND day = :day",
-                   {'c': value, 'u': session['user_id'][0], 'g': session["user_id"][number], 'year': year, 'month': month, 'day': day})
-    connection.commit()
-    connection.close()
+                   c=value, u=session['user_id'][0], g=gn, year=year, month=month, day=day)
     if int(number) == 1:
         return redirect("/goal_display/1/"+str(year)+"/"+str(month))
     if int(number) == 2:
@@ -346,8 +308,6 @@ def login():
     # Forget any user_id
     session.clear()
     if request.method == "POST":
-        connection = sqlite3.connect("tracker.db")
-        db = connection.cursor()
         # Ensure username was submitted
         if not request.form.get("username"):
             return apology("must provide username", 403)
@@ -358,26 +318,22 @@ def login():
 
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username",
-                          {'username': request.form.get("username")}).fetchall()
+                          username=request.form.get("username"))
 
         # Ensure username exists and password is correct
         if rows == []:
             return apology("invalid username and/or password", 403)
-        split = str(rows[0]).split(",")
-        pass_hash = split[2]
-        pass_hash = pass_hash[2:len(pass_hash) - 1]
+        pass_hash = rows[0]["password"]
         if not check_password_hash(pass_hash, request.form.get("password")):
             return apology("invalid username and/or password", 403)
 
         # Remember which user has logged in
         session["user_id"] = [request.form.get("username")]
-        goal_info = str(db.execute("SELECT * FROM users WHERE username = :u", {'u': session['user_id'][0]}).fetchall()[0])
-        goal_1_name = goal_info.split(",")[3].strip().strip("'")
-        goal_2_name = goal_info.split(",")[8].strip().strip("'")
-        goal_3_name = goal_info.split(",")[13].strip().strip("'")
-        session["user_id"] += [goal_1_name, goal_2_name, goal_3_name]
-        connection.commit()
-        connection.close()
+        goal_info = db.execute("SELECT * FROM users WHERE username = :u", u=session['user_id'][0])[0]
+        goal_1_name = goal_info['goal_1_name']
+        goal_2_name = goal_info['goal_2_name']
+        goal_3_name = goal_info['goal_3_name']
+        session["user_id"] = [session["user_id"][0]] + [goal_1_name, goal_2_name, goal_3_name]
         # Redirect user to home page
         return redirect("/")
 
@@ -397,16 +353,12 @@ def logout():
 @app.route("/register", methods=["GET", "POST"])
 # citation: https://docs.python.org/2.5/lib/sqlite3-Cursor-Objects.html
 def register():
-    connection = sqlite3.connect("tracker.db")
-    db = connection.cursor()
     if request.method == "GET":
-        connection.commit()
-        connection.close()
         return render_template('register.html')
     # by default, it'll do the rest of the stuff if given a post request
     name = request.form.get('username')
     # check if username is taken
-    taken = int(str(db.execute("SELECT COUNT(username) FROM users WHERE username=:username", {"username": name}).fetchone())[1])
+    taken = int(db.execute("SELECT COUNT(username) FROM users WHERE username=:username", username=name)[0]['COUNT(username)'])
     if taken != 0:
         return apology("Username is already taken.")
     # check if username is blank
@@ -427,49 +379,41 @@ def register():
         return apology("Password must contain at least one upper case letter, one lower case letter, and one number. Password must also be at least 8 characters long.")
     pass_hash = generate_password_hash(password)
     # hash the password and add the account into the user database
-    db.execute("INSERT INTO users (username, password) VALUES (:username, :password);", {"username": name, "password": pass_hash})
+    db.execute("INSERT INTO users (username, password) VALUES (:username, :password);", username=name, password=pass_hash)
     # log the user in
     session["user_id"] = [name]
-    connection.commit()
-    connection.close()
     return redirect("/set_goals")
 
 
 @app.route("/set_goals", methods=["GET", "POST"])
 @login_required
 def set_goals():
-    connection = sqlite3.connect("tracker.db")
-    db = connection.cursor()
     if request.method == "GET":
-        connection.commit()
-        connection.close()
         return render_template("set_goals.html", goal_names=session["user_id"][1:])
     goal_1_name = request.form.get("goal_1_name")
     goal_2_name = request.form.get("goal_2_name")
     goal_3_name = request.form.get("goal_3_name")
+    if not goal_1_name or not goal_2_name or not goal_3_name:
+        return apology("goal name cannot be blank")
     if goal_1_name.lower() == goal_2_name.lower() or goal_2_name.lower() == goal_3_name.lower() or goal_1_name.lower() == goal_3_name.lower():
         return apology("No two goals can be the same. Click \"Set Goals\" on the upper left to try again.")
     goal_1_type = request.form.get("goal_1_type")
     goal_2_type = request.form.get("goal_2_type")
     goal_3_type = request.form.get("goal_3_type")
-    if not goal_1_name or not goal_2_name or not goal_3_name:
-        return apology("goal name cannot be blank")
+
     now = datetime.now() - timedelta(hours=5)
     year = now.year
     month = now.month
     day = now.day
-    query = "UPDATE users SET goal_1_name, goal_1_type, goal_1_year, goal_1_month, goal_1_day, goal_2_name, goal_2_type, goal_2_year, goal_2_month, goal_2_day, goal_3_name, goal_2_type, goal_3_year, goal_3_month, goal_3_day)"
     db.execute('''UPDATE users SET goal_1_name=:name1, goal_1_type=:type1, goal_1_year=:year1, goal_1_month=:month1, goal_1_day=:day1,
     goal_2_name=:name2, goal_2_type=:type2, goal_2_year=:year2, goal_2_month=:month2, goal_2_day=:day2,
     goal_3_name=:name3, goal_3_type=:type3, goal_3_year=:year3, goal_3_month=:month3, goal_3_day=:day3
     WHERE username=:username;
     ''',
-               {'query': query, 'name1': goal_1_name, 'type1': goal_1_type, 'year1': year, 'month1': month, 'day1': day,
-                'name2': goal_2_name, 'type2': goal_2_type, 'year2': year, 'month2': month, 'day2': day,
-                'name3': goal_3_name, 'type3': goal_3_type, 'year3': year, 'month3': month, 'day3': day, 'username': session['user_id'][0]})
-    session["user_id"] += [goal_1_name, goal_2_name, goal_3_name]
-    connection.commit()
-    connection.close()
+        name1=goal_1_name, type1=goal_1_type, year1=year, month1=month, day1=day,
+        name2=goal_2_name, type2=goal_2_type, year2=year, month2=month, day2=day,
+        name3=goal_3_name, type3=goal_3_type, year3=year, month3=month, day3=day, username=session['user_id'][0])
+    session["user_id"] = [session["user_id"][0]] + [goal_1_name, goal_2_name, goal_3_name]
     return redirect("/")
 
 
