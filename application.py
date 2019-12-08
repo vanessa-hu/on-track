@@ -35,7 +35,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # connect to database
-db = SQL("sqlite:///tracker.db")
+db = SQL(get_postgre())
 
 
 @app.route("/")
@@ -60,7 +60,7 @@ def index():
             gn.append("")  # this logic is later used to display the appropriate navbar in layout.html
         else:
             gn.append(goal_name)
-        # label if goal_type is binary, checks completed field. 0 is no, 1 is yes
+        # label if goal_type is binary, checks completed field (if logged). if logged, 0 is no, 1 is yes
         if goal_type == "binary":
             x = db.execute("SELECT completed FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
                            username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=day)  # see if the user has logged data for today
@@ -74,14 +74,14 @@ def index():
                 text = "Completed Today?\n No"
                 images.append(logged_pic)
 
-        else:  # label if goal_type is numeric
+        else:  # label if goal_type is numeric. checks if logged for the day. if yes, checks amount field
             var = db.execute("SELECT * FROM numeric_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
                              username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=day)
             if len(var) == 0:
                 text = "Num Achieved: Not Logged"
                 images.append(not_logged_pic)
             else:
-                comp = int(var[0]['amount'])  # checks amount field in var, stores in comp
+                comp = int(var[0]['amount'])  # checks "amount" field in var, stores in comp
                 text = "Num Achieved: " + str(comp)
                 images.append(logged_pic)
         info.append(text)
@@ -90,7 +90,7 @@ def index():
 # citation: https://stackoverflow.com/questions/26954122/how-can-i-pass-arguments-into-redirecturl-for-of-flask
 @app.route("/goal_display/<number>/<year>/<month>", methods=["GET", "POST"])
 @login_required
-# default goal_display is current time, at est. takes in form input if posted
+# default goal_display is current time, at EST. takes in form input if posted
 def goal_display(number, year=(datetime.now() - timedelta(hours=5)).year, month=(datetime.now() - timedelta(hours=5)).month):
     """Display info for a specific goal"""
     if request.method == "POST":
@@ -113,12 +113,12 @@ def goal_display(number, year=(datetime.now() - timedelta(hours=5)).year, month=
     # figure out if a month spills onto 4, 5, or 6 calendar weeks and display html template accordingly
     if weekday_num == 6 and num_days == 28:  # basically only if February starts on a Sunday, we have a month that spans exactly 4 weeks
         num_weeks = 4
-    elif num_days == 31 and (weekday_num == 4 or weekday_num == 5):  # first day is fri/sat, 31 day month
+    elif num_days == 31 and (weekday_num == 4 or weekday_num == 5):  # first day is Fri/Sat, 31-day month
         num_weeks = 6
-    elif num_days == 30 and weekday_num == 5:  # first day is sat, 30 day month
+    elif num_days == 30 and weekday_num == 5:  # first day is Sat, 30-day month
         num_weeks = 6
 
-    if weekday_num == 6:  # if it's Sunday, start populating from Sunday
+    if weekday_num == 6:  # if it's Sunday (index 6), start populating from Sunday (month-display is Sun-Sat)
         n = 0
     else:
         n = weekday_num + 1
@@ -174,7 +174,7 @@ def goal_display_day(number):
     month = int(month)
     day = int(day)
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-    day_text = days[day_of_week]  # gets header name
+    day_text = days[day_of_week]  # gets day of the week to display
     goal_info = db.execute("SELECT * FROM users WHERE username = :u", u=session['user_id'][0])[0]
     goal_name = goal_info["goal_" + str(number) + "_name"]  # get the appropriate information about the goal
     goal_type = goal_info["goal_" + str(number) + "_type"]
@@ -185,7 +185,7 @@ def goal_display_day(number):
     data = ""
     pics = ["https://images.unsplash.com/photo-1564510714747-69c3bc1fab41?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80",
             "https://images.unsplash.com/photo-1524678714210-9917a6c619c2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=600&q=60", "https://images.unsplash.com/photo-1473181488821-2d23949a045a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80"]
-    pic = random.choice(pics)
+    pic = random.choice(pics)  # random pic background
     if goal_type == "binary":
         x = db.execute("SELECT completed FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
                        username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=day)  # fetch user data
@@ -441,7 +441,7 @@ def new_quotes():
         quote = quotesCalculator(mood)
         return render_template('quotes1.html', mood=mood, quote=quote, goal_names=session['user_id'][1:])
 
-# the below is ripped straight from CS50 Finance
+# the below is straight from CS50 Finance
 
 
 def errorhandler(e):

@@ -3,7 +3,8 @@
 ## Tech Stack Overview
 
 ### Programs and Programming Languages
-
+Our program uses HTML/CSS, Flask/Python for all our functions and routing, and SQLite3 for our database.
+We also have some Javascript linked to Bootstrap.
 
 ### Databases
 We have three tables in our database tracker.db, which we will describe below.
@@ -27,7 +28,8 @@ It has each goal name since we stored each goal name into session['user_id'] aft
 Similarly, the links route to /goal_display/(1, 2, or 3)/{{ year }}/{{ month }}, with current year and month passed in.
 However, when the user clicks on the goal tabs, the user is taken to either the binary_month.html or numeric_month.html based on the the type of goal (numeric or binary) the user has determined this particular goal will be.
 The fourth link in our nav-bar is our Mood Quote Generator, described below.
-## bootstrap features
+
+## Bootstrap Features
 Bootstrap alerts:
 on the login.html to remind the user to register before having the credentials to login, on the homepage aka index.html to remind the user to log their goals, and
 
@@ -60,16 +62,15 @@ To adjust for this, we use the timedelta module and subtract timedelta(hours=5) 
 
 
 ## Enter Data
-    Users can log data for a habit both from day and month-view, binary or numeric html pages.
-    Each of these pages has a form that takes in desired month, year, day. Binary pages take Yes/No in a dropdown; numeric pages take numeric input.
-    We created two different routes in which our users could enter their data based on the type of goal that they wanted to track: binary or numerical.
+Users can log data for a habit both from day and month-view, binary or numeric html pages.
+Each of these pages has a form that takes in desired month, year, day. Binary pages take Yes/No in a dropdown; numeric pages take numeric input.
+We created two different routes in which our users could enter their data based on the type of goal that they wanted to track: binary or numerical.
 
-    For enter\_binary\_data/<number>/<year>/<month>:
-        A binary goal is one that you can track by solely saying yes (as in I completed it) or no (I have not completed it).
-        We make a form to submit to binary within the binary\_day.html and binary\_month html files.
+For enter\_binary\_data/<number>/<year>/<month>:
+    A binary goal is one that you can track by solely saying yes (as in I completed it) or no (I have not completed it).
+    We make a form to submit to binary within the binary\_day.html and binary\_month html files.
 
-
-    For enter_numeric_data/<number>/<year>/<month>:
+For enter_numeric_data/<number>/<year>/<month>:
     A numeric goal is one that you can track by inputting a number. Examples include sleep trackers in which a users inputs the number of hours they get that night or fluid tracker in which a user inputs the number of cups a user has drunk.
     The numeric goal form is within the numeric_day.html file.
 
