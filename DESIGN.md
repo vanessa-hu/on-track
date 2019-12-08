@@ -95,8 +95,4 @@ We modified CS50 Finance's apology function by passing in parameters for year, m
 This is because layout.html requires these parameters on its navigation bar (it needs to display the goal names so the user can view their data).
 
 ## Some Comments on Design Choices
-A “design document” for your project in the form of a Markdown file called DESIGN.md
-that discusses, technically, how you implemented your project and why you made the design
-decisions you did. Your design document should be at least several paragraphs in length.
-Whereas your documentation is meant to be a user’s manual, consider your design document
-your opportunity to give the staff a technical tour of your project underneath its hood.
+We decided to use one goal_display function

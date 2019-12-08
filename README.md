@@ -1,7 +1,7 @@
 # On Track
 CS50 final project - Karina Halevy, Vanessa Hu, Grace Cen
 ## Overview
-    Our application allows users to track their progress on goals and mood over the course of a month. It also
+    Our application allows users to track their progress on goals over the course of a month. These goals can be both numerical(number of items) or binary (yes, no)
 ## Usage
 
 
