@@ -34,7 +34,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-db = SQL("sqlite:///tracker.db")
+db = SQL(get_postgre())
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
