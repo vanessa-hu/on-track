@@ -2,10 +2,11 @@
 CS50 Final Project - Karina Halevy, Vanessa Hu, Grace Cen
 ## Overview
     Our application allows users to track their progress on three goals over the course of a month.
-    These goals can be both numerical(number of items) or binary (yes, no)
+    These goals can be both numerical(number of items) or binary (yes, no).
+    Screencast: https://www.youtube.com/watch?v=-VZJRGm6LZg&feature=youtu.be
 
 ## Usage: Compiling
-
+Our project lives on the CS50 IDE. To compile, just run ```flask run```.
 
 ## Usage:
 
