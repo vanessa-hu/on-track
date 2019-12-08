@@ -62,7 +62,7 @@ def index():
             gn.append(goal_name)
         # label if goal_type is binary, checks completed field (if logged). if logged, 0 is no, 1 is yes
         if goal_type == "binary":
-            x = db.execute("SELECT completed FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+            x = db.execute("SELECT completed FROM binary_goals WHERE \"user\"=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
                            username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=day)  # see if the user has logged data for today
             if len(x) == 0:
                 text = "Completed Today?\n Not Logged"
@@ -75,7 +75,7 @@ def index():
                 images.append(logged_pic)
 
         else:  # label if goal_type is numeric. checks if logged for the day. if yes, checks amount field
-            var = db.execute("SELECT * FROM numeric_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+            var = db.execute("SELECT * FROM numeric_goals WHERE \"user\"=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
                              username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=day)
             if len(var) == 0:
                 text = "Num Achieved: Not Logged"
@@ -132,7 +132,7 @@ def goal_display(number, year=(datetime.now() - timedelta(hours=5)).year, month=
             if dates[i] == " ":
                 data.append(2)  # indicates that data was not logged, maps to corresponding css class
             else:
-                var = db.execute("SELECT * FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+                var = db.execute("SELECT * FROM binary_goals WHERE \"user\"=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
                                  username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=dates[i])  # get user data
                 if len(var) == 0:
                     data.append(2)
@@ -145,7 +145,7 @@ def goal_display(number, year=(datetime.now() - timedelta(hours=5)).year, month=
                 data.append(" ")
             else:
 
-                var = db.execute("SELECT * FROM numeric_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+                var = db.execute("SELECT * FROM numeric_goals WHERE \"user\"=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
                                  username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=dates[i])
                 if len(var) == 0:
                     data.append("--")
@@ -187,7 +187,7 @@ def goal_display_day(number):
             "https://images.unsplash.com/photo-1524678714210-9917a6c619c2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=600&q=60", "https://images.unsplash.com/photo-1473181488821-2d23949a045a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80"]
     pic = random.choice(pics)  # random pic background
     if goal_type == "binary":
-        x = db.execute("SELECT completed FROM binary_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+        x = db.execute("SELECT completed FROM binary_goals WHERE \"user\"=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
                        username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=day)  # fetch user data
         label = "Completed Today?"
         if len(x) == 0:
@@ -199,7 +199,7 @@ def goal_display_day(number):
         return render_template("binary_day.html", month=month, year=year, day=day, day_text=day_text, name=goal_name, label=label, data=data, goal_names=session["user_id"][1:], number=number, years=years, pic=pic)
     # otherwise, do the same for numeric data
     label = "Amount Achieved"
-    var = db.execute("SELECT * FROM numeric_goals WHERE user=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
+    var = db.execute("SELECT * FROM numeric_goals WHERE \"user\"=:username AND goal_name=:goal_name AND year=:year AND month=:month AND day=:day",
                      username=session['user_id'][0], goal_name=goal_name, year=year, month=month, day=day)
     if len(var) == 0:
         data = "Not Logged"
@@ -240,13 +240,13 @@ def enter_binary_data(number, year, month):
     inval = before_start(year, month, day, year_check, month_check, day_check)  # is this date before they started logging?
     if inval:
         return apology("You started tracking this goal after this date.")
-    exists = db.execute("SELECT user, goal_name, year, month, day FROM binary_goals WHERE user = :u AND goal_name = :gn AND year = :y AND month = :m AND day = :d",
+    exists = db.execute("SELECT \"user\", goal_name, year, month, day FROM binary_goals WHERE \"user\" = :u AND goal_name = :gn AND year = :y AND month = :m AND day = :d",
                         u=session['user_id'][0], gn=gn, y=year, m=month, d=day)  # see if we need to enter new data or change existing data
     if len(exists) == 0:
-        db.execute("INSERT INTO binary_goals (user, goal_name, year, month, day, completed) VALUES (:u, :g, :y, :m, :d, :c)",
+        db.execute("INSERT INTO binary_goals (\"user\", goal_name, year, month, day, completed) VALUES (:u, :g, :y, :m, :d, :c)",
                    u=session['user_id'][0], g=gn, y=year, m=month, d=day, c=didIt)  # enter new data if it hasn't been logged yet
     else:
-        db.execute("UPDATE binary_goals SET completed = :c WHERE user = :u AND goal_name = :g AND year = :year AND month = :month AND day = :day",
+        db.execute("UPDATE binary_goals SET completed = :c WHERE \"user\" = :u AND goal_name = :g AND year = :year AND month = :month AND day = :day",
                    c=didIt, u=session['user_id'][0], g=gn, year=year, month=month, day=day)  # modify existing data if it has been logged already
     # once done entering data into the database, we redirect the user back to the goal they were viewing
     if int(number) == 1:
@@ -287,13 +287,13 @@ def enter_numeric_data(number, year, month):
     if inval:
         return apology("You started tracking this goal after this date.")
     # if we get this far, the date is valid, so determine whether to log new data or change existing data
-    exists = db.execute("SELECT user, goal_name, year, month, day FROM numeric_goals WHERE user = :u AND goal_name = :gn AND year = :y AND month = :m AND day = :d",
+    exists = db.execute("SELECT \"user\", goal_name, year, month, day FROM numeric_goals WHERE \"user\" = :u AND goal_name = :gn AND year = :y AND month = :m AND day = :d",
                         u=session['user_id'][0], gn=gn, y=year, m=month, d=day)
     if len(exists) == 0:
-        db.execute("INSERT INTO numeric_goals (user, goal_name, year, month, day, amount) VALUES (:u, :g, :y, :m, :d, :c)",
+        db.execute("INSERT INTO numeric_goals (\"user\", goal_name, year, month, day, amount) VALUES (:u, :g, :y, :m, :d, :c)",
                    u=session['user_id'][0], g=gn, y=year, m=month, d=day, c=value)
     else:
-        db.execute("UPDATE numeric_goals SET amount = :c WHERE user = :u AND goal_name = :g AND year = :year AND month = :month AND day = :day",
+        db.execute("UPDATE numeric_goals SET amount = :c WHERE \"user\" = :u AND goal_name = :g AND year = :year AND month = :month AND day = :day",
                    c=value, u=session['user_id'][0], g=gn, year=year, month=month, day=day)
     # redirect back to goal when we are done
     if int(number) == 1:
