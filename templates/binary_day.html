@@ -97,12 +97,42 @@
     <h3 class="card-title">{{ label }}</h3>
     <p class="card-text">{{ data }}</p>
     <!--<a href="#" class="btn btn-primary">Go somewhere</a> -->
-    <button class="btn btn-primary" href="/goal_display/{{ number}}/{{ year }}/{{ month }}">Month View!</button>
+
+
+    <!--<a class="btn btn-primary" href="/goal_display/{{ number}}/{{ year }}/{{ month }}">Month View!</a>-->
   </div>
 </div>
             </div>
 
 <div class = "col-sm-5">
+  <form action="/goal_display/{{ number }}/{{ year }}/{{ month }}" method="post">
+        <p>Want to switch back to month view instead? Enter your desired year and month below!</p>
+        <select name="desired_month">
+
+                    <option value= "1">January</option>
+                    <option value= "2">February</option>
+                    <option value= "3">March</option>
+                    <option value= "4">April</option>
+                    <option value= "5">May</option>
+                    <option value= "6">June</option>
+                    <option value= "7">July</option>
+                    <option value= "8">August</option>
+                    <option value= "9">September</option>
+                    <option value= "10">October</option>
+                    <option value= "11">November</option>
+                    <option value= "12">December</option>
+
+            </select>
+        <select name="desired_year">
+                    {% for i in years %}
+                      <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+
+        </select>
+         <button class="btn btn-primary" type="submit">Month View!</button>
+    </form>
+<br>
+<br>
 <form action="/goal_display_day/{{ number }}" method="post" class = "padding">
         <div class = "padding">
         <p>Want to view data for a different day? Enter your desired day here!</p>

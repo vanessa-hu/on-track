@@ -53,8 +53,9 @@ Similarly, it'll display 1 of 2 images based on whether the user logged data for
     We created two different routes in which our users could enter their data based on the type of goal that they wanted to track: binary or numerical.
     For enter_binary_data/<number>/<year>/<month>:
         A binary goal is one that you can track by solely saying yes (as in I completed it) or no (I have not completed it).
-        The binary goal form is within the binary_day.html file.
-    For enter)numeric_data/<
+        We make a form to submit to binary within the binary_day.html and binary_month html files.
+
+    For enter_numeric_data/<number>/<year>/<month>:
     A numeric goal is one that you can track by inputting a number. Examples include sleep trackers in which a users inputs the number of hours they get that night or fluid tracker in which a user inputs the number of cups a user has drunk.
     The numeric goal form is within the numeric_day.html file.
 
