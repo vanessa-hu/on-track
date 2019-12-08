@@ -14,7 +14,7 @@ User is first directed to a login page and must press the register tab of the na
 You must follow the parameters provided to create a unique username and password. Then press register.
 This will take you to a set goals page, where the user is allowed to enter the names of the 3 goals they want to track and its type (binary or numeric).
 Once set, the user will be redirected to the index/homepage, which welcomes the user and displays info on the 3 habits in a carousel.
-
+db
 On the index page, each of the 3 pages (cards) of the carousel shows a habit, whether it's logged, Yes/No or numerical amount, and a button to take the user
 to the month-calendar page to view the current month calendar for that habit.
 

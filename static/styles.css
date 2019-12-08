@@ -59,7 +59,7 @@ main img
 
 body
 {
-    background-image: url('../static/mountain.jpg');
+    background-image: url('https://www.google.com/search?q=mountain+pictures&source=lnms&tbm=isch&sa=X&ved=2ahUKEwinst-MwqXmAhVQiOAKHSxgAOQQ_AUoAXoECAwQAw&biw=1440&bih=821#imgrc=AJxyBpHMHY3_2M:');
     background-size: cover;
 
 }
