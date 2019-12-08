@@ -79,12 +79,16 @@
     </form>
 
 <body>
-<h3>Viewing {{ month }}/{{ day }}/{{ year }}</h3>
+<h3>Viewing {{ month }} / {{ day }} / {{ year }}</h3>
 <h3>{{ day_text }}</h3>
 <h4>{{ label }}</h4>
 <p>{{ data }}</p>
 
-<a href= "/goal_display/{{ number }}/{{ year }}/{{ month }}" class="btn btn-info" role="button">Month View!</a>
+<p>Click here for monthview!</p>
+    <form action="/goal_display/{{ number }}/{{ year }}/{{ month }}" method="post">
+          <button class="btn btn-info" type="submit">Month View!</button>
+    </form>
+
 
 
 

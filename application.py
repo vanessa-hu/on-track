@@ -41,7 +41,7 @@ if not os.environ.get("API_KEY"):
 @app.route("/")
 @login_required
 def index():
-    connection = sqlite3.connect("tracker.db")
+    connection = sqlite3.connect("postgres://vxwwjtnlzfupvo:99c5af5e8365cbb81bb29c16fd94f77182a46d65cbfe160488463341d3b49c82@ec2-174-129-254-249.compute-1.amazonaws.com:5432/dc95tobog4o6of")
     db = connection.cursor()
     # insert code here
     # outline:
@@ -66,7 +66,7 @@ def index():
     not_logged_pic = "https://images.unsplash.com/photo-1486895756674-b48b9b2eacf3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80"
 
     for i in range(1,4):
-        connection = sqlite3.connect("tracker.db")
+        connection = sqlite3.connect("postgres://vxwwjtnlzfupvo:99c5af5e8365cbb81bb29c16fd94f77182a46d65cbfe160488463341d3b49c82@ec2-174-129-254-249.compute-1.amazonaws.com:5432/dc95tobog4o6of")
         db = connection.cursor()
         goal_info = str(db.execute("SELECT * FROM users WHERE username = :u", {'u': session['user_id'][0]}).fetchall()[0])
         goal_name = goal_info.split(",")[i*5+3-5].strip().strip("'")
@@ -109,7 +109,7 @@ def index():
 @app.route("/goal_display/<number>/<year>/<month>")
 @login_required
 def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, month = (datetime.now() - timedelta(hours=5)).month):
-    connection = sqlite3.connect("tracker.db")
+    connection = sqlite3.connect("postgres://vxwwjtnlzfupvo:99c5af5e8365cbb81bb29c16fd94f77182a46d65cbfe160488463341d3b49c82@ec2-174-129-254-249.compute-1.amazonaws.com:5432/dc95tobog4o6of")
     print(type(year))
     print(type(month))
     db = connection.cursor()
@@ -186,7 +186,7 @@ def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, mont
 @app.route("/goal_display_day/<number>", methods = ["POST"])
 @login_required
 def goal_display_day(number):
-    connection = sqlite3.connect("tracker.db")
+    connection = sqlite3.connect("postgres://vxwwjtnlzfupvo:99c5af5e8365cbb81bb29c16fd94f77182a46d65cbfe160488463341d3b49c82@ec2-174-129-254-249.compute-1.amazonaws.com:5432/dc95tobog4o6of")
     db = connection.cursor()
     year = request.form.get("desired_year")
     month = request.form.get("desired_month")
@@ -308,7 +308,7 @@ def enter_numeric_data(number, year = (datetime.now() - timedelta(hours=5)).year
     year = int(year)
 
     month = int(month)
-    connection = sqlite3.connect("tracker.db")
+    connection = sqlite3.connect("postgres://vxwwjtnlzfupvo:99c5af5e8365cbb81bb29c16fd94f77182a46d65cbfe160488463341d3b49c82@ec2-174-129-254-249.compute-1.amazonaws.com:5432/dc95tobog4o6of")
     db = connection.cursor()
     month = int(request.form.get("desired_month")) #gives int 1-12
     day = int(request.form.get("desired_day")) #gives int 1-31
@@ -334,30 +334,32 @@ def enter_numeric_data(number, year = (datetime.now() - timedelta(hours=5)).year
     if inval:
         return apology("You started tracking this goal after this date.")
     # get date info
-    exists = db.execute("SELECT user, year, month, day FROM numeric_goals WHERE user = :u AND year = :y AND month = :m AND day = :d", {'u': session['user_id'][0], 'y': year, 'm': month, 'd': day})
+    exists = db.execute("SELECT user, year, month, day FROM numeric_goals WHERE user = :u AND year = :y AND month = :m AND day = :d",
+                        {'u': session['user_id'][0], 'y': year, 'm': month, 'd': day})
     if len(exists.fetchall()) == 0:
         db.execute("INSERT INTO numeric_goals (user, goal_name, year, month, day, amount) VALUES (:u, :g, :y, :m, :d, :c)",
-              {'u': session['user_id'][0], 'g': session["user_id"][number], 'y': year, 'm': month, 'd': day, 'c': value})
+                   {'u': session['user_id'][0], 'g': session["user_id"][number], 'y': year, 'm': month, 'd': day, 'c': value})
     else:
-        db.execute("UPDATE numeric_goals SET amount = :c WHERE user = :u AND goal_name = :g", {'c': value, 'u': session['user_id'][0], 'g': session["user_id"][number]})
+        db.execute("UPDATE numeric_goals SET amount = :c WHERE user = :u AND goal_name = :g",
+                   {'c': value, 'u': session['user_id'][0], 'g': session["user_id"][number]})
     connection.commit()
     connection.close()
     if int(number) == 1:
-          return redirect("/goal_display/1/"+str(year)+"/"+str(month))
+        return redirect("/goal_display/1/"+str(year)+"/"+str(month))
     if int(number) == 2:
-          return redirect("/goal_display/2/"+str(year)+"/"+str(month))
+        return redirect("/goal_display/2/"+str(year)+"/"+str(month))
     else:
-          return redirect("/goal_display/3/"+str(year)+"/"+str(month))
+        return redirect("/goal_display/3/"+str(year)+"/"+str(month))
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-
     """Log user in"""
-
     # Forget any user_id
     session.clear()
     if request.method == "POST":
-        connection = sqlite3.connect("tracker.db")
+        connection = sqlite3.connect(
+            "postgres://vxwwjtnlzfupvo:99c5af5e8365cbb81bb29c16fd94f77182a46d65cbfe160488463341d3b49c82@ec2-174-129-254-249.compute-1.amazonaws.com:5432/dc95tobog4o6of")
         db = connection.cursor()
         # Ensure username was submitted
         if not request.form.get("username"):
@@ -404,10 +406,12 @@ def logout():
     # Redirect user to login form
     return redirect("/")
 
+
 @app.route("/register", methods=["GET", "POST"])
 # citation: https://docs.python.org/2.5/lib/sqlite3-Cursor-Objects.html
 def register():
-    connection = sqlite3.connect("tracker.db")
+    connection = sqlite3.connect(
+        "postgres://vxwwjtnlzfupvo:99c5af5e8365cbb81bb29c16fd94f77182a46d65cbfe160488463341d3b49c82@ec2-174-129-254-249.compute-1.amazonaws.com:5432/dc95tobog4o6of")
     db = connection.cursor()
     if request.method == "GET":
         connection.commit()
@@ -444,15 +448,17 @@ def register():
     connection.close()
     return redirect("/set_goals")
 
+
 @app.route("/set_goals", methods=["GET", "POST"])
 @login_required
 def set_goals():
-    connection = sqlite3.connect("tracker.db")
+    connection = sqlite3.connect(
+        "postgres://vxwwjtnlzfupvo:99c5af5e8365cbb81bb29c16fd94f77182a46d65cbfe160488463341d3b49c82@ec2-174-129-254-249.compute-1.amazonaws.com:5432/dc95tobog4o6of")
     db = connection.cursor()
     if request.method == "GET":
         connection.commit()
         connection.close()
-        return render_template("set_goals.html", goal_names = session["user_id"][1:])
+        return render_template("set_goals.html", goal_names=session["user_id"][1:])
     goal_1_name = request.form.get("goal_1_name")
     goal_2_name = request.form.get("goal_2_name")
     goal_3_name = request.form.get("goal_3_name")
@@ -473,25 +479,27 @@ def set_goals():
     goal_3_name=:name3, goal_3_type=:type3, goal_3_year=:year3, goal_3_month=:month3, goal_3_day=:day3
     WHERE username=:username;
     ''',
-    {'query': query, 'name1': goal_1_name, 'type1': goal_1_type, 'year1': year, 'month1': month, 'day1': day,
-    'name2': goal_2_name, 'type2': goal_2_type, 'year2': year, 'month2': month, 'day2': day,
-    'name3': goal_3_name, 'type3': goal_3_type, 'year3': year, 'month3': month, 'day3': day, 'username': session['user_id'][0]})
+               {'query': query, 'name1': goal_1_name, 'type1': goal_1_type, 'year1': year, 'month1': month, 'day1': day,
+                'name2': goal_2_name, 'type2': goal_2_type, 'year2': year, 'month2': month, 'day2': day,
+                'name3': goal_3_name, 'type3': goal_3_type, 'year3': year, 'month3': month, 'day3': day, 'username': session['user_id'][0]})
     session["user_id"] += [goal_1_name, goal_2_name, goal_3_name]
     connection.commit()
     connection.close()
     return redirect("/")
 
-@app.route("/quotes",methods=["GET", "POST"])
+
+@app.route("/quotes", methods=["GET", "POST"])
 @login_required
 def new_quotes():
 
     if request.method == "GET":
-        return render_template('quotes.html', goal_names = session['user_id'][1:])
+        return render_template('quotes.html', goal_names=session['user_id'][1:])
     else:
         mood = request.form.get('mood')
         quote = quotesCalculator(mood)
 
-        return render_template('quotes1.html', mood = mood, quote=quote, goal_names = session['user_id'][1:])
+        return render_template('quotes1.html', mood=mood, quote=quote, goal_names=session['user_id'][1:])
+
 
 def errorhandler(e):
     """Handle error"""

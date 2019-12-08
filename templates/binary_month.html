@@ -79,7 +79,7 @@
     </form>
 
 <body>
-<h3>Viewing {{ month }}/{{ year }}</h3>
+<h3>Viewing {{ month }} / {{ year }}</h3>
 <p>Key: a green cell means that you have completed your goal for that date. A red cell indicates that you did not complete your goal. A white cell indicates that no data has been entered.</p>
 {% if num_weeks == 4 %}
 <div class = "padding">
@@ -283,7 +283,9 @@
     </form>
 
 <p>You have fulfilled your goal {{ goal_fulfilled }} days this month.</p>
+
 <p>Want a view of a specific day instead? Input your desired day below!</p>
+
 <form action="/goal_display_day/{{ number }}" method="post">
         <p></p>
         <select name="desired_month">
@@ -344,7 +346,7 @@
                     {% endfor %}
 
             </select>
-          <button class="btn btn-primary" type="submit">Day View!</button>
+          <button class="btn btn-info" type="submit">Day View!</button>
     </form>
 
 </body>
