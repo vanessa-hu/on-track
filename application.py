@@ -365,8 +365,8 @@ def register():
     # by default, it'll do the rest of the stuff if given a post request
     name = request.form.get('username')
     # check if username is taken
-    taken = int(db.execute("SELECT COUNT(username) FROM users WHERE username=:username", username=name)[0]['COUNT(username)'])
-    if taken != 0:
+    taken = db.execute("SELECT * FROM users WHERE username=:username", username=name)
+    if taken != []:
         return apology("Username is already taken.")
     # check if username is blank
     if not name:
