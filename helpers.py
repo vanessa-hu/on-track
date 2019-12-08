@@ -5,8 +5,12 @@ from datetime import datetime, timedelta
 from flask import redirect, render_template, request, session
 from functools import wraps
 
+# evidence that we did, in fact, try connecting to Heroku with postgresql
 postgre = "postgres://rwbakbnwqpcrrt:0aa197ed8c139a6036d565f5a57076d03ceb5ca9f0db680e6940e9df735c5286@ec2-54-221-214-3.compute-1.amazonaws.com:5432/de32mhas0ip96i"
-goal_names = ["", "", ""]
+
+# this function is basically just ripped from CS50 Finance, with a few extra params added in for the layout navbar
+
+
 def apology(message, code=400):
     """Render message as an apology to user."""
     def escape(s):
@@ -23,9 +27,10 @@ def apology(message, code=400):
         gn = session["user_id"][1:]
     except:
         gn = ["", "", ""]
-    return render_template("apology.html", top=code, bottom=escape(message), goal_names = gn, year = int((datetime.now() - timedelta(hours=5)).year), month = int((datetime.now() - timedelta(hours=5)).month)), code
+    return render_template("apology.html", top=code, bottom=escape(message), goal_names=gn, year=int((datetime.now() - timedelta(hours=5)).year), month=int((datetime.now() - timedelta(hours=5)).month)), code
 
 
+# also ripped from CS50 Finance
 def login_required(f):
     """
     Decorate routes to require login.
@@ -39,7 +44,10 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+# ripped from Karina's personal touch from CS50 Finance
 def pass_strong(password):
+    """Check password strength"""
     lower_case = "abcdefghijklmnopqrstuvwxyz"
     upper_case = lower_case.upper()
     numbers = "1234567890"
@@ -68,15 +76,9 @@ def pass_strong(password):
         return False
     return True
 
-def get_goal_names():
-    return goal_names
-
-def set_goal_names(item1, item2, item3):
-    goal_names[0] = item1
-    goal_names[1] = item2
-    goal_names[2] = item3
 
 def in_the_future(year, month, day):
+    """Check if a date is in the future, based on current time in EST"""
     now = datetime.now() - timedelta(hours=5)
     this_year = now.year
     this_month = now.month
@@ -89,7 +91,9 @@ def in_the_future(year, month, day):
         return True
     return False
 
+
 def before_start(year, month, day, start_year, start_month, start_day):
+    """Check if a date is before the date on which a user registered"""
     if year < start_year:
         return True
     if year == start_year and month < start_month:
@@ -98,5 +102,8 @@ def before_start(year, month, day, start_year, start_month, start_day):
         return True
     return False
 
+
 def get_postgre():
+    """Just good practice using getters and setters instead of straight up ripping variables from other files"""
+    # also further evidence that we tried postgresql but failed
     return postgre
