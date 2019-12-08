@@ -8,7 +8,7 @@
     <h2>{{ name }}</h2><br>
     <p class = "padding">How on top of your goal have you been?</p>
 
-     month=month, year=year, day = day, day_text = day_text, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = session["user_id"][1:], number = number)
+
     <form action="/enter_binary_data/{{ number }}/{{ year }}/{{ month }}" method="post">
         <p>Enter data for today or for any past date since you started tracking this goal.</p>
         <select name="desired_month">
@@ -86,7 +86,7 @@
 <h4>{{ label }}</h4>
 <p>{{ data }}</p>
 
-<a href= "/goal_display/{{ number }}/{{ year }}/{{ month }}" class="btn btn-info" role="button">Monthview!</a>
+<a href= "/goal_display/{{ number }}/{{ year }}/{{ month }}" class="btn btn-info" role="button">Month View!</a>
 
 
 
@@ -153,7 +153,7 @@
 
             </select>
 
-			  <button class="btn btn-primary" type="submit">View Progress For This Day!</button>
+			  <button class="btn btn-primary" type="submit">View Data For This Day!</button>
 
     </form>
 

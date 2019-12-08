@@ -114,10 +114,10 @@ def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, mont
     print(month)
     db = connection.cursor()
     number = int(number)
-    if type(year) != list:
-        year = int(year)
-    else:
+    if type(year) == list:
         year = int(year[0])
+    else:
+        year = int(year)
     month = int(month)
     goal_info = str(db.execute("SELECT * FROM users WHERE username = :u", {'u': session['user_id'][0]}).fetchall()[0])
     goal_name = goal_info.split(",")[number*5+3-5].strip().strip("'")
@@ -183,24 +183,22 @@ def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, mont
     connection.close()
     return render_template("numeric_month.html", month=month, year=year, years = years, name = goal_name, data = data, dates = dates, num_weeks = num_weeks, goal_names = session["user_id"][1:], number = number)
 
-@app.route("/goal_display_day/<number>/<year>/<month>/<day>", methods = ["GET", "POST"])
+@app.route("/goal_display_day/<number>", methods = ["POST"])
 @login_required
-def goal_display_day(number, year = (datetime.now() - timedelta(hours=5)).year, month = (datetime.now() - timedelta(hours=5)).month, day = (datetime.now() - timedelta(hours=5)).day):
+def goal_display_day(number):
     connection = sqlite3.connect("tracker.db")
     db = connection.cursor()
-    print(year)
-    print(month)
-    print(day)
-    # for some reason they think the month is "static" and the day is "mountain.jpg"??? 2019, static, and mountain.jpg
+    year = request.form.get("desired_year")
+    month = request.form.get("desired_month")
+    day = request.form.get("desired_day")
+
     # citation: https://www.programiz.com/python-programming/datetime/strptime
     day_of_week = datetime.strptime(month + "/" + day + "/" + year, '%m/%d/%Y').weekday()
+    print(day_of_week)
     # what do you get when you print?
     # ok that's weird
     number = int(number)
-    if type(year) != list:
-        year = int(year)
-    else:
-        year = int(year[0])
+    year = int(year)
     month = int(month)
     day = int(day)
     days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]

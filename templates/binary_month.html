@@ -284,7 +284,7 @@
 
 <p>You have fulfilled your goal {{ goal_fulfilled }} days this month.</p>
 <p>Want a view of a specific day instead? Input your desired day below!</p>
-<form action="/goal_display_day/{{ number }}/{{ year }}/{{ month }}" method="post">
+<form action="/goal_display_day/{{ number }}" method="post">
         <p></p>
         <select name="desired_month">
 
@@ -337,8 +337,6 @@
                     <option>30</option>
                     <option>31</option>
 
-
-
             </select>
             <select name="desired_year">
                     {% for i in years %}
@@ -346,10 +344,8 @@
                     {% endfor %}
 
             </select>
-			  <button class="btn btn-primary" id="track" type="submit">Track!</button>
-
+          <button class="btn btn-primary" type="submit">Day View!</button>
     </form>
-<a href="/goal_display_day/{{ number }}/{{ year }}/{{ month }}/1" class="btn btn-info" role="button">Dayview!</a>
 
 </body>
 </html>
