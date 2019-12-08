@@ -85,11 +85,11 @@
 
 <div class="container padding">
         <div class="row">
-          <div class="col-sm-6">
+          <div class="col-sm-7">
 <div class="card dayview">
   <img class="card-img-top" src="{{ pic }}">
   <div class="card-img-overlay">
-    <h2 class="card-title">Viewing {{ month }}/{{ day }}/{{ year }}</h2>
+    <h2 class="card-title daytitle">Viewing {{ month }}/{{ day }}/{{ year }}</h2>
   </div>
   <div class="card-body">
       <br>
@@ -97,14 +97,12 @@
     <h3 class="card-title">{{ label }}</h3>
     <p class="card-text">{{ data }}</p>
     <!--<a href="#" class="btn btn-primary">Go somewhere</a> -->
-    <form action="/goal_display/{{ number }}/{{ year }}/{{ month }}" method="post">
-          <button class="btn btn-info" type="submit">Month View!</button>
-    </form>
+    <button class="btn btn-primary" href="/goal_display/{{ number}}/{{ year }}/{{ month }}">Month View!</button>
   </div>
 </div>
             </div>
 
-<div class = "col-sm-6">
+<div class = "col-sm-5">
 <form action="/goal_display_day/{{ number }}" method="post" class = "padding">
         <div class = "padding">
         <p>Want to view data for a different day? Enter your desired day here!</p>
@@ -168,7 +166,9 @@
                     {% endfor %}
 
             </select>
-
+            <br>
+            <br>
+            <br>
 			  <button class="btn btn-primary" type="submit">View Data For This Day!</button>
 
     </form>

@@ -9,6 +9,8 @@
     <p class = "padding">How on top of your goal have you been?</p>
     <form action="/enter_binary_data/{{ number }}/{{ year }}/{{ month }}" method="post">
         <p>Enter data for today or for any past date since you started tracking this goal.</p>
+        <br>
+        <br>
         <select name="desired_month">
 
                     <option value= "1">January</option>
@@ -79,6 +81,8 @@
     </form>
 
 <body>
+  <br>
+  <br>
 <h3>Viewing {{ month }} / {{ year }}</h3>
 <p>Key: a green cell means that you have completed your goal for that date. A red cell indicates that you did not complete your goal. A white cell indicates that no data has been entered.</p>
 {% if num_weeks == 4 %}
@@ -253,7 +257,9 @@
   </tr>
 </table>
 {% endif %}
-<form action="/change_month/{{ number }}" method="post">
+<br>
+<br>
+<form action="/goal_display/{{ number }}/{{ year }}/{{ month }}" method="post">
         <p>Want to view data for a different month? Enter your desired month here!</p>
         <select name="desired_month">
 

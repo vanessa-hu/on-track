@@ -112,6 +112,10 @@ h2
 
 .dayview
 {
-    max-width: 40vw;
+    max-width: 50vw;
+}
+.daytitle
+{
+    background: white;
 }
 

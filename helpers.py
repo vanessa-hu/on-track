@@ -76,7 +76,7 @@ def set_goal_names(item1, item2, item3):
     goal_names[2] = item3
 
 def in_the_future(year, month, day):
-    now = datetime.now()
+    now = datetime.now() - timedelta(hours=5)
     this_year = now.year
     this_month = now.month
     this_day = now.day

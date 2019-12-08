@@ -97,12 +97,13 @@ def index():
     return render_template("index.html", goal_names=session["user_id"][1:], year=year, month=month, info=info, images = images)
 
 # citation: https://stackoverflow.com/questions/26954122/how-can-i-pass-arguments-into-redirecturl-for-of-flask
-@app.route("/goal_display/<number>/<year>/<month>")
+@app.route("/goal_display/<number>/<year>/<month>", methods = ["GET", "POST"])
 @login_required
 def goal_display(number, year = (datetime.now() - timedelta(hours=5)).year, month = (datetime.now() - timedelta(hours=5)).month):
     connection = sqlite3.connect("tracker.db")
-    print(type(year))
-    print(type(month))
+    if request.method == "POST":
+        year = request.form.get("desired_year")
+        month = request.form.get("desired_month")
     db = connection.cursor()
     number = int(number)
     if type(year) == list:
@@ -274,8 +275,8 @@ def enter_binary_data(number, year=(datetime.now() - timedelta(hours=5)).year, m
         db.execute("INSERT INTO binary_goals (user, goal_name, year, month, day, completed) VALUES (:u, :g, :y, :m, :d, :c)",
                     {'u': session['user_id'][0], 'g': session["user_id"][number], 'y': year, 'm': month, 'd': day, 'c': didIt})
     else:
-        db.execute("UPDATE binary_goals SET completed = :c WHERE user = :u AND goal_name = :g",
-                   {'c': didIt, 'u': session['user_id'][0], 'g': session["user_id"][number]})
+        db.execute("UPDATE binary_goals SET completed = :c WHERE user = :u AND goal_name = :g AND year = :year AND month = :month AND day = :day",
+                   {'c': didIt, 'u': session['user_id'][0], 'g': session["user_id"][number], 'year': year, 'month': month, 'day': day})
     connection.commit()
     connection.close()
     if int(number) == 1:
@@ -327,8 +328,8 @@ def enter_numeric_data(number, year=(datetime.now() - timedelta(hours=5)).year, 
         db.execute("INSERT INTO numeric_goals (user, goal_name, year, month, day, amount) VALUES (:u, :g, :y, :m, :d, :c)",
                    {'u': session['user_id'][0], 'g': session["user_id"][number], 'y': year, 'm': month, 'd': day, 'c': value})
     else:
-        db.execute("UPDATE numeric_goals SET amount = :c WHERE user = :u AND goal_name = :g",
-                   {'c': value, 'u': session['user_id'][0], 'g': session["user_id"][number]})
+        db.execute("UPDATE numeric_goals SET amount = :c WHERE user = :u AND goal_name = :g AND year = :year AND month = :month AND day = :day",
+                   {'c': value, 'u': session['user_id'][0], 'g': session["user_id"][number], 'year': year, 'month': month, 'day': day})
     connection.commit()
     connection.close()
     if int(number) == 1:

@@ -76,6 +76,8 @@
     </form>
 
 <body>
+  <br>
+  <br>
 <h3>Viewing {{month}} / {{year}}</h3>
 {% if num_weeks == 4 %}
     <table style="width:100%">
@@ -247,7 +249,9 @@
   </tr>
 </table>
 {% endif %}
-<form action="/change_month/{{ number }}" method="post">
+<br>
+<br>
+<form action="/goal_display/{{ number }}/{{ year }}/{{ month }}" method="post">
         <p>Want to view data for a different month? Enter your desired month here!</p>
         <select name="desired_month">
 
@@ -274,7 +278,8 @@
 			  <button class="btn btn-primary" type="submit">View Data For This Month!</button>
 
     </form>
-
+  <br>
+  <br>
     <p>Want a view of a specific day instead? Input your desired day below!</p>
     <form action="/goal_display_day/{{ number }}" method="post">
         <p></p>
