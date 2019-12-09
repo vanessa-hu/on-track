@@ -9,12 +9,12 @@ We also have some Javascript linked to Bootstrap.
 ### Databases
 We have three tables in our database tracker.db, which we will describe below.
 Users stores usernames, an autoincrementing set of ids, the hash of the password, as well as the goal\_[number]\_name, goal\_[number]\_type for 3 goals.
-    It also stores goal\_[number]\_year, goal\_[number]\_month, and goal\_[number]\_day.
+It also stores goal\_[number]\_year, goal\_[number]\_month, and goal\_[number]\_day.
 binary\_goals and numeric_goals stores all binary-type and numeric-type entries respectively.
 They both have the string-type user (the username linked to users and stored in session);
-    the year, month, and day of the entry (stored as integer).
-    binary_goals has the integer completed (0 if not, 1 if completed, null if no entry)
-    numeric_goals stores under integer amount the integer amount for that habit.
+the year, month, and day of the entry (stored as integer).
+binary_goals has the integer completed (0 if not, 1 if completed, null if no entry)
+numeric_goals stores under integer amount the integer amount for that habit.
 
 ## Register / Log In
 With code from CS50 Finance, the user registers with a unique username and a password that at least one upper case letter, one lower case letter, and one number. Password must also be at least 8 characters long.
@@ -24,9 +24,9 @@ We have an alert for "Make sure you have already registered!" on login.
 
 ## layout.html
 Layout.html is the base of all our other HTML pages, and it has the Bootstrap nav-bar with three tabs for each goal.
-It has each goal name since we stored each goal name into session['user_id'] after index 0 and pass it in via render_template.
+It has each goal name since we stored each goal name into session['user\_id'] after index 0 and pass it in via render_template.
 Similarly, the links route to /goal_display/(1, 2, or 3)/{{ year }}/{{ month }}, with current year and month passed in.
-However, when the user clicks on the goal tabs, the user is taken to either the binary_month.html or numeric_month.html based on the the type of goal (numeric or binary) the user has determined this particular goal will be.
+However, when the user clicks on the goal tabs, the user is taken to either the binary\_month.html or numeric\_month.html based on the the type of goal (numeric or binary) the user has determined this particular goal will be.
 The fourth link in our nav-bar is our Mood Quote Generator, described below.
 
 ## Bootstrap Features
@@ -41,7 +41,7 @@ Bootstrap carousel:
 Our carousel, located in index.html, displays 3 images for whether or not each of the 3 goals have been logged and this is explained in the index section below.
 
 ## Set Goals
-set\_goals html appears right after registering, where the user sets the name and type (binary or numeric) of each of the three habits.
+set\_goals.html appears right after registering, where the user sets the name and type (binary or numeric) of each of the three habits.
 This is done through a form-group, so when the user submits (post), application.py uses request.form.get() to store then update the user in users
 with this information: goal_#_name, goal_#_type for 3 goals, as well as the month, day, year integer the user set these goals.
 We also store that information so when logging data, the user can't log data before they registered.
@@ -67,12 +67,12 @@ Each of these pages has a form that takes in desired month, year, day. Binary pa
 We created two different routes in which our users could enter their data based on the type of goal that they wanted to track: binary or numerical.
 
 For enter\_binary\_data/<number>/<year>/<month>:
-    A binary goal is one that you can track by solely saying yes (as in I completed it) or no (I have not completed it).
-    We make a form to submit to binary within the binary\_day.html and binary\_month html files.
+A binary goal is one that you can track by solely saying yes (as in I completed it) or no (I have not completed it).
+We make a form to submit to binary within the binary\_day.html and binary\_month html files.
 
 For enter\_numeric\_data/<number>/<year>/<month>:
-    A numeric goal is one that you can track by inputting a number. Examples include sleep trackers in which a users inputs the number of hours they get that night or fluid tracker in which a user inputs the number of cups a user has drunk.
-    The numeric goal form is within the numeric_day.html file.
+A numeric goal is one that you can track by inputting a number. Examples include sleep trackers in which a users inputs the number of hours they get that night or fluid tracker in which a user inputs the number of cups a user has drunk.
+The numeric goal form is within the numeric_day.html file.
 
 ## Goal Display (Day)
 The app route "goal\_display_day/<number>" can be accessed from any habit's month-display page.
