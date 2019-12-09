@@ -66,16 +66,16 @@ Users can log data for a habit both from day and month-view, binary or numeric h
 Each of these pages has a form that takes in desired month, year, day. Binary pages take Yes/No in a dropdown; numeric pages take numeric input.
 We created two different routes in which our users could enter their data based on the type of goal that they wanted to track: binary or numerical.
 
-For enter\_binary\_data/<number>/<year>/<month>:
+For enter\_binary\_data/\<number\>/\<year\>/\<month\>:
 A binary goal is one that you can track by solely saying yes (as in I completed it) or no (I have not completed it).
 We make a form to submit to binary within the binary\_day.html and binary\_month html files.
 
-For enter\_numeric\_data/<number>/<year>/<month>:
+For enter\_numeric\_data/\<number\>/\<year\>/\<month\>:
 A numeric goal is one that you can track by inputting a number. Examples include sleep trackers in which a users inputs the number of hours they get that night or fluid tracker in which a user inputs the number of cups a user has drunk.
 The numeric goal form is within the numeric_day.html file.
 
 ## Goal Display (Day)
-The app route "goal\_display_day/<number>" can be accessed from any habit's month-display page.
+The app route "goal\_display_day/\<number\>" can be accessed from any habit's month-display page.
 We have a form that collects desired year, month, and day to stored, and we use .strptime to convert these strings to a date object
 to use .weekday() to get the weekday.
 There's a list of possible pic backgrounds that we randomly choose using random.choice().
