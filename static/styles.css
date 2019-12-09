@@ -10,22 +10,27 @@ nav .navbar-brand .blue
 {
     color: #6495ED;
 }
+
 nav .navbar-brand .red
 {
     color: #FF7F50;
 }
+
 nav .navbar-brand .yellow
 {
     color: #ADD8E6;
 }
+
 nav .navbar-brand .green
 {
     color: #00CED1;
 }
+
 nav
 {
     background-color: black;
 }
+
 main .form-control
 {
     /* center form controls */
@@ -63,6 +68,7 @@ body
     background-size: cover;
 
 }
+
 .headerrow
 {
     font-weight: bold;
@@ -75,6 +81,7 @@ table
     width: 100%;
     background-color: white;
 }
+
 td
 {
     column-width: 200px;
@@ -91,6 +98,7 @@ h2
 {
     padding: 50px;
 }
+
 .total
 {
     font-weight: bold;
@@ -115,6 +123,7 @@ h2
 {
     max-width: 50vw;
 }
+
 .daytitle
 {
     background: white;
