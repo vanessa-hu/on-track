@@ -12,20 +12,20 @@ Our project is deployed to Heroku. It can be accessed at https://on-track-cs50.h
 ## Usage:
 
 Setting Up Account:
-User is first directed to a login page and must press the register tab of the navbar, located on the upper right corner of the page.
-You must follow the parameters provided to create a unique username and password. Then press register.
-This will take you to a set goals page, where the user is allowed to enter the names of the 3 goals they want to track and its type (binary or numeric).
+The user is first directed to a login page and must press the register tab of the navbar, located on the upper right corner of the page.
+They follow the parameters provided to create a unique username and a strongpassword. Then, they press register.
+This will take them to a set goals page, where the user is allowed to enter the names of the 3 goals they want to track and its type (binary or numeric).
+The goals must all be unique (case-insensitive, so dishes and DishEs are the same).
 Once set, the user will be redirected to the index/homepage, which welcomes the user and displays info on the 3 habits in a carousel.
-db
-On the index page, each of the 3 pages (cards) of the carousel shows a habit, whether it's logged, Yes/No or numerical amount, and a button to take the user
-to the month-calendar page to view the current month calendar for that habit.
+On the index page, each of the 3 pages (cards) of the carousel shows a habit, whether it's logged, Yes/No or numerical amount if it is logged, and a button to take the user
+to the month view page to view the current month's data for that habit.
 
 Viewing Tracker (Monthly Calendar):
 The user can also always access each habit's month page via the three nav-bar tabs.
 
 [ Log Data ]
 Once on a month page for a habit, users can use the first form to log data (Yes/No for binary, any non-negative integer for numeric)
-for any month, day, year (each a drop-down menu) since the day they started tracking the habit. Clicking submit will log the data
+for any month, day, year (each a drop-down menu) that is not in the future and that is on or after the day they started tracking the habit. Clicking submit will log the data
 and take them back to the calendar page.
 - binary habit: day on calendar is green if completed, red if not, white if not logged
 - numeric habit: number will appear on the corresponding day. If not logged, -- will appear.
@@ -47,7 +47,6 @@ On the right top is a form to select a month and year, to return to the month vi
 [Change Day]
 On the lower right is another form to select a month, day, year to show the day-view for that date.
 
-
 Mood Quote Generator: This generates a quote that is fitting for your mood.
 After clicking on the Mood Quote Generator tab on the navbar, the user will be able able to press the radio button that corresponds to their mood.
 After pressing submit, users will be redirected to a page where a corresponding quote will be displayed.
@@ -59,7 +58,7 @@ This was frustrating because we had meticulously split and stripped sqlite3 exec
 but we ultimately had to convert back to cs50's SQL.
 - We also had trouble with the program differentiating calendar.py and python's calendar module so we decided to put all of calendar.py's functions into applications.py.
 - We also struggled with the trickle down problems of allowing the user to choose a goal type (binary or numeric).
-Figuring out how to route the nav bar tabs {{goal_1_name}}, {{goal_2_name}}, and {{goal_3_name}} to our binary_month.html or numeric_month.html based on the response of the user.
+Figuring out how to route the nav bar tabs {{goal\_1\_name}}, {{goal\_2\_name}}, and {{goal\_3\_name}} to our binary\_month.html or numeric\_month.html based on the response of the user.
 - It was difficult to generate a monthly calendar, so we eventually figured out the logic: by creating a table of 4-6 weeks,
 making a list of the date numbers (e.g. 1-30), and pad the front and back of the list with empty spaces so the month would start and end on the accurate days of the week.
 We used dateime and calendar to figure out time and also information about what day of the week a certain month starts in.
