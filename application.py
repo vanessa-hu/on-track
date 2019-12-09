@@ -265,11 +265,12 @@ def enter_numeric_data(number, year, month):
     month = int(request.form.get("desired_month"))  # gives int 1-12
     day = int(request.form.get("desired_day"))  # gives int 1-31
     year = int(request.form.get("desired_year"))
-    value = int(request.form.get("numeric_tracker"))  # will be a number
+    value = request.form.get("numeric_tracker")  # will be a number
 
     # if no answer
-    if value == None or month == None or year == None:
+    if value == None or value == "" or month == None or year == None:
         return apology("Must fill in all fields!")
+    value = int(value)
     weekday_num, num_days = calendar.monthrange(year, month)  # 0-6 is Mon-Sun
 
     # basically the same as binary, checking if the date entered is valid
