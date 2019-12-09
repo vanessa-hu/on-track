@@ -8,18 +8,18 @@ We also have some Javascript linked to Bootstrap.
 
 ### Databases
 We have three tables in our database tracker.db, which we will describe below.
-Users stores usernames, user_ids, the hash of the password, as well as the goal_#_name, goal_#_type for 3 goals.
-    It also stores goal_#_year, goal_#_month, goal_#_day.
-binary_goals and numeric_goals stores all binary-type and numeric-type entries respectively.
+Users stores usernames, an autoincrementing set of ids, the hash of the password, as well as the goal\_[number]\_name, goal\_[number]\_type for 3 goals.
+    It also stores goal\_[number]\_year, goal\_[number]\_month, and goal\_[number]\_day.
+binary\_goals and numeric_goals stores all binary-type and numeric-type entries respectively.
 They both have the string-type user (the username linked to users and stored in session);
     the year, month, and day of the entry (stored as integer).
     binary_goals has the integer completed (0 if not, 1 if completed, null if no entry)
     numeric_goals stores under integer amount the integer amount for that habit.
 
 ## Register / Log In
-With code from finance.db, the user registers with a unique username and a password that at least one upper case letter, one lower case letter, and one number. Password must also be at least 8 characters long.
+With code from CS50 Finance, the user registers with a unique username and a password that at least one upper case letter, one lower case letter, and one number. Password must also be at least 8 characters long.
 Log in also functions like it did in finance.db, checking if the hashes are equal.
-We have an alert for "Make sure you have already registered!" on login!
+We have an alert for "Make sure you have already registered!" on login.
 
 
 ## layout.html
@@ -41,7 +41,7 @@ Bootstrap carousel:
 Our carousel, located in index.html, displays 3 images for whether or not each of the 3 goals have been logged and this is explained in the index section below.
 
 ## Set Goals
-set_goals_html appears right after registering, where the user sets the name and type (binary or numeric) of each of the three habits.
+set\_goals html appears right after registering, where the user sets the name and type (binary or numeric) of each of the three habits.
 This is done through a form-group, so when the user submits (post), application.py uses request.form.get() to store then update the user in users
 with this information: goal_#_name, goal_#_type for 3 goals, as well as the month, day, year integer the user set these goals.
 We also store that information so when logging data, the user can't log data before they registered.
@@ -70,19 +70,19 @@ For enter\_binary\_data/<number>/<year>/<month>:
     A binary goal is one that you can track by solely saying yes (as in I completed it) or no (I have not completed it).
     We make a form to submit to binary within the binary\_day.html and binary\_month html files.
 
-For enter_numeric_data/<number>/<year>/<month>:
+For enter\_numeric\_data/<number>/<year>/<month>:
     A numeric goal is one that you can track by inputting a number. Examples include sleep trackers in which a users inputs the number of hours they get that night or fluid tracker in which a user inputs the number of cups a user has drunk.
     The numeric goal form is within the numeric_day.html file.
 
 ## Goal Display (Day)
-The app route "goal_display_day/<number>" can be accessed from any habit's month-display page.
+The app route "goal\_display_day/<number>" can be accessed from any habit's month-display page.
 We have a form that collects desired year, month, and day to stored, and we use .strptime to convert these strings to a date object
 to use .weekday() to get the weekday.
 There's a list of possible pic backgrounds that we randomly choose using random.choice().
-We access the binary_goals or numeric_goals table based on the goal_type, and store the answer into data.
-We thus either render binary_day or numeric_day.html.
+We access the binary\_goals or numeric\_goals table based on the goal\_type, and store the answer into data.
+We thus either render binary\_day or numeric\_day.html.
     Both pages have a Bootstrap card on the side with an image, the data overlay on top, and the logged info.
-    The left side has a form to switch to month view (/goal_display route) or to log info.
+    The left side has a form to switch to month view (/goal\_display route) or to log info.
 
 
 ## Mood Quote Generator

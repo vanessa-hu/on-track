@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from flask import redirect, render_template, request, session
 from functools import wraps
 
-# evidence that we did, in fact, try connecting to Heroku with postgresql
+# our postgre database url
 postgre = "postgres://hcbgpzlypvdzfn:c3e84575d714ff83f269441d62e00aa6a7041c35b50c41c64d733dc64269276a@ec2-174-129-254-216.compute-1.amazonaws.com:5432/da4grjacno1b4i"
 
 # this function is basically just ripped from CS50 Finance, with a few extra params added in for the layout navbar
@@ -105,5 +105,4 @@ def before_start(year, month, day, start_year, start_month, start_day):
 
 def get_postgre():
     """Just good practice using getters and setters instead of straight up ripping variables from other files"""
-    # also further evidence that we tried postgresql but failed
     return postgre

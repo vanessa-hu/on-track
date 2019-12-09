@@ -441,7 +441,7 @@ def new_quotes():
         mood = request.form.get('mood')
         # randomly generate a quote based on the inputted mood
         quote = quotesCalculator(mood)
-        return render_template('quotes1.html', mood=mood, quote=quote, goal_names=["mood","",""])
+        return render_template('quotes1.html', mood=mood, quote=quote, goal_names=["mood", "", ""])
 
 # the below is straight from CS50 Finance
 

@@ -4,9 +4,10 @@ CS50 Final Project - Karina Halevy, Vanessa Hu, Grace Cen
     Our application allows users to track their progress on three goals over the course of a month.
     These goals can be both numerical(number of items) or binary (yes, no).
     Screencast: https://www.youtube.com/watch?v=-VZJRGm6LZg&feature=youtu.be
+    Note: the screencast was done before we successfully deployed to Heroku, so it used ```flask run``` on the CS50 IDE.
 
 ## Usage: Compiling
-Our project lives on the CS50 IDE. To compile, just run ```flask run```.
+Our project is deployed to Heroku. It can be accessed at https://on-track-cs50.herokuapp.com.
 
 ## Usage:
 
