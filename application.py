@@ -436,7 +436,7 @@ def set_goals():
 def new_quotes():
     """Display a quote based on the user's mood"""
     if request.method == "GET":
-        return render_template('quotes.html', goal_names=session['user_id'][1:])
+        return render_template('quotes.html', goal_names=["mood", "", ""])
     else:
         mood = request.form.get('mood')
         # randomly generate a quote based on the inputted mood
