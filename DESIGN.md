@@ -86,10 +86,10 @@ We thus either render binary\_day or numeric\_day.html.
 
 
 ## Mood Quote Generator
-    The mood quote generator requires the user to input their mood using radio buttons through a form in quotes.html.
-    The quotesCalculator function in quotes.py (which we input!) takes that input and returns a song from a list that corresponds to that mood.
-    We hard coded lists of three quotes for each mood and implemented the built in python function random so the user has the ability to get different quotes when they use the mood quotes generator tab again and are feeling the same mood.
-    The user will then be redirected to the quotes1.html where the quote that the quotesCalculator returns is displayed.
+The mood quote generator requires the user to input their mood using radio buttons through a form in quotes.html.
+The quotesCalculator function in quotes.py (which we input!) takes that input and returns a song from a list that corresponds to that mood.
+We hard coded lists of three quotes for each mood and implemented the built in python function random so the user has the ability to get different quotes when they use the mood quotes generator tab again and are feeling the same mood.
+The user will then be redirected to the quotes1.html where the quote that the quotesCalculator returns is displayed.
 
 ## Apology
 We modified CS50 Finance's apology function by passing in parameters for year, month, and goal_names.
