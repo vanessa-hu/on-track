@@ -1,3 +1,4 @@
+// we don't actually used this, but we tried a JS implementation of a calendar before settling in Python
 today = new Date();
 currentMonth = today.getMonth();
 currentYear = today.getFullYear();
@@ -55,12 +56,9 @@ function showCalendar(month, year) {
                 cellText = document.createTextNode("");
                 cell.appendChild(cellText);
                 row.appendChild(cell);
-            }
-            else if (date > daysInMonth(month, year)) {
+            } else if (date > daysInMonth(month, year)) {
                 break;
-            }
-
-            else {
+            } else {
                 cell = document.createElement("td");
                 cellText = document.createTextNode(date);
                 if (date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
