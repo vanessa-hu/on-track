@@ -75,7 +75,7 @@ that they completed their goal or the average number obtained per days logged in
 We wanted to add a third type of habit, a sliding scale, as well as a mood tracker.
 
 ## References
-(We have also included in-line references in our source code.)
+(We have also included in-line references in our source code.) .
 https://stackoverflow.com/questions/46402022/subtract-hours-and-minutes-from-time
 https://stackoverflow.com/questions/26954122/how-can-i-pass-arguments-into-redirecturl-for-of-flask
 https://www.programiz.com/python-programming/datetime/strptime
@@ -85,6 +85,6 @@ https://www.geeksforgeeks.org/sql-using-python/
 https://cs50.readthedocs.io/heroku/
 https://pip.pypa.io/en/stable/installing/
 https://www.programiz.com/python-programming/datetime/current-datetime
-https://www.w3schools.com/python/python_datetime.asp .
-https://stackoverflow.com/questions/9481136/how-to-find-number-of-days-in-the-current-month/9481305 .
+https://www.w3schools.com/python/python_datetime.asp
+https://stackoverflow.com/questions/9481136/how-to-find-number-of-days-in-the-current-month/9481305
 CS50 Finance
