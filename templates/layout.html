@@ -37,6 +37,10 @@
                     <ul class="navbar-nav mr-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/set_goals">Set Goals</a></li>
                     </ul>
+                    {% elif goal_names[0] == "mood"%}
+                    <ul class="navbar-nav mr-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="/">Return to Homepage</a></li>
+                    </ul>
                     {% else %}
                     <ul class="navbar-nav mr-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/goal_display/1/{{ year }}/{{ month }}">{{ goal_names[0] }}</a></li>
